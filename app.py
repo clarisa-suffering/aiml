@@ -1,66 +1,64 @@
-import pandas as pd
-import numpy as np
-import pickle
 from flask import Flask, request, jsonify
-import os
+import pandas as pd
+import pickle
+import numpy as np
+from flask_cors import CORS
+from sklearn.cluster import KMeans
 
 app = Flask(__name__)
+CORS(app)
 
-# Load model and tools
+# Load the model, scaler, and dataframe
 with open("meal_model.pkl", "rb") as f:
     model, le, scaler, df = pickle.load(f)
 
-HISTORY_FILE = "meal_history.csv"
+diet_cols = ['vegan','vegetarian','keto','paleo','gluten_free','mediterranean']
+nutrient_cols = ['calories','protein','fat','carbs']
 
-# Initialize history file if it doesn't exist
-if not os.path.exists(HISTORY_FILE):
-    pd.DataFrame(columns=["User_ID", "Food_Item"]).to_csv(HISTORY_FILE, index=False)
-
-@app.route("/recommend", methods=["POST"])
+@app.route('/recommend', methods=['POST'])
 def recommend():
     data = request.json
-    user_id = data["User_ID"]
-    input_data = [[
-        data['Calories'],
-        data['Protein (g)'],
-        data['Carbohydrates (g)'],
-        data['Fat (g)'],
-        data['Fiber (g)'],
-        data['Sugars (g)'],
-        data['Sodium (mg)'],
-        data['Cholesterol (mg)'],
-        data['Water_Intake (ml)']
-    ]]
+    target_calories = float(data.get('target_calories', 2000))
+    meal_count = int(data.get('meal_count', 3))
+    preferences = data.get('preferences', {})
 
-    # Standardize input
-    input_scaled = scaler.transform(input_data)
+    # Filter meals by preferences
+    filtered_df = df.copy()
+    for diet in diet_cols:
+        if preferences.get(diet, 0) == 1:
+            filtered_df = filtered_df[filtered_df[diet] == 1]
 
-    # Predict probabilities
-    probs = model.predict_proba(input_scaled)[0]
-    sorted_indices = np.argsort(probs)[::-1]
+    if len(filtered_df) < meal_count:
+        return jsonify({"error": "Not enough meals match preferences."}), 400
 
-    # Load history and filter
-    history_df = pd.read_csv(HISTORY_FILE)
-    seen = history_df[history_df["User_ID"] == user_id]["Food_Item"].tolist()
+    # Scale nutrient features for clustering
+    X_cluster = filtered_df[nutrient_cols]
+    X_scaled = scaler.transform(filtered_df[nutrient_cols + diet_cols])[:, :4]  # only nutrients
 
-    recommendations = []
-    for idx in sorted_indices:
-        food = le.inverse_transform([idx])[0]
-        if food not in seen:
-            row = df[df["Food_Item"] == food].iloc[0]
-            recommendations.append({
-                "Food_Item": food,
-                "Category": row["Category"],
-                "Meal_Type": row["Meal_Type"]  # Include meal type
-            })
-        if len(recommendations) == 3:
-            break
+    # Perform KMeans clustering
+    k = min(meal_count, len(filtered_df))  # number of clusters = meals requested or max possible
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+    clusters = kmeans.fit_predict(X_scaled)
 
-    # Save history
-    new_history = pd.DataFrame([{"User_ID": user_id, "Food_Item": r["Food_Item"]} for r in recommendations])
-    new_history.to_csv(HISTORY_FILE, mode="a", header=False, index=False)
+    filtered_df['cluster'] = clusters
 
-    return jsonify(recommendations)
+    # Select one representative meal from each cluster
+    selected_meals = []
+    for cluster_id in range(k):
+        cluster_meals = filtered_df[filtered_df['cluster'] == cluster_id]
+        # Choose the one closest to target_calories / meal_count
+        cluster_meals['score'] = abs(cluster_meals['calories'] - target_calories / meal_count)
+        best = cluster_meals.nsmallest(1, 'score')
+        selected_meals.append(best)
 
-if __name__ == "__main__":
+    # Combine results
+    meal_plan_df = pd.concat(selected_meals)
+    meal_plan = meal_plan_df[['meal_name', 'calories', 'protein', 'fat', 'carbs']].to_dict(orient='records')
+
+    return jsonify({
+        "meal_plan": meal_plan,
+        "total_calories": sum([m['calories'] for m in meal_plan])
+    })
+
+if __name__ == '__main__':
     app.run(debug=True)

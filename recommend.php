@@ -1,35 +1,57 @@
 <?php
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $target_calories = floatval($_POST['target_calories']);
+    $meal_count = intval($_POST['meal_count']);
 
-$data = [
-    'User_ID' => $_POST['user_id'],
-    'Calories' => floatval($_POST['Calories']),
-    'Protein (g)' => floatval($_POST['Protein (g)']),
-    'Carbohydrates (g)' => floatval($_POST['Carbohydrates (g)']),
-    'Fat (g)' => floatval($_POST['Fat (g)']),
-    'Fiber (g)' => floatval($_POST['Fiber (g)']),
-    'Sugars (g)' => floatval($_POST['Sugars (g)']),
-    'Sodium (mg)' => floatval($_POST['Sodium (mg)']),
-    'Cholesterol (mg)' => floatval($_POST['Cholesterol (mg)']),
-    'Water_Intake (ml)' => floatval($_POST['Water_Intake (ml)']),
-    'Meal_Type' => $_POST['Meal_Type']  // Optional if you want to filter by meal type
-];
+    $data = [
+        'target_calories' => $target_calories,
+        'meal_count' => $meal_count
+    ];
 
-$options = [
-    'http' => [
-        'header'  => "Content-type: application/json",
-        'method'  => 'POST',
-        'content' => json_encode($data),
-    ],
-];
+    $options = [
+        'http' => [
+            'header'  => "Content-type: application/json",
+            'method'  => 'POST',
+            'content' => json_encode($data),
+        ],
+    ];
+    $context  = stream_context_create($options);
 
-$context  = stream_context_create($options);
-$result = file_get_contents('http://127.0.0.1:5000/recommend', false, $context);
-
-$response = json_decode($result, true);
-
-echo "<h2>Top 3 Meal Recommendations:</h2><ul>";
-foreach ($response as $meal) {
-    echo "<li>{$meal['Food_Item']} ({$meal['Category']}, {$meal['Meal_Type']})</li>";
+    $result = file_get_contents('http://127.0.0.1:5000/recommend', false, $context);
+    $response = json_decode($result, true);
 }
-echo "</ul>";
 ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Meal Plan Recommendation</title>
+</head>
+<body>
+    <h1>Meal Plan Recommendation</h1>
+    <form method="post">
+        <label>Target Calories (kcal):</label><br>
+        <input type="number" name="target_calories" required><br><br>
+
+        <label>Number of Meals per Day:</label><br>
+        <input type="number" name="meal_count" required min="1"><br><br>
+
+        <input type="submit" value="Get Meal Plan">
+    </form>
+
+    <?php if (!empty($response) && !isset($response['error'])): ?>
+        <h2>Recommended Meal Plan:</h2>
+        <ul>
+            <?php foreach ($response as $meal): ?>
+                <li>
+                    <?php echo htmlspecialchars($meal['meal_name']); ?> - 
+                    Calories: <?php echo htmlspecialchars($meal['calories']); ?>
+                   
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php elseif (!empty($response) && isset($response['error'])): ?>
+        <p style="color:red;"><?php echo htmlspecialchars($response['error']); ?></p>
+    <?php endif; ?>
+</body>
+</html>
