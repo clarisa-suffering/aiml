@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Predict Obesity Category</title>
+</head>
+<body>
+    <h1>🔍 Predict Obesity Category</h1>
+
+    <form method="POST">
+        <label>Age:</label><br>
+        <input type="number" name="Age" required><br><br>
+
+        <label>Gender:</label><br>
+        <select name="Gender" required>
+            {% for g in options['Gender'] %}
+                <option value="{{ g }}">{{ g }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Height (m):</label><br>
+        <input type="number" step="0.01" name="Height" required><br><br>
+
+        <label>Weight (kg):</label><br>
+        <input type="number" step="0.1" name="Weight" required><br><br>
+
+        <label>CALC:</label><br>
+        <select name="CALC" required>
+            {% for c in options['CALC'] %}
+                <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>FAVC:</label><br>
+        <select name="FAVC" required>
+            {% for f in options['FAVC'] %}
+                <option value="{{ f }}">{{ f }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>FCVC (frequency of vegetable consumption):</label><br>
+        <input type="number" step="1" min="0" max="5" name="FCVC" required><br><br>
+
+        <label>NCP (number of main meals):</label><br>
+        <input type="number" step="1" min="1" max="5" name="NCP" required><br><br>
+
+        <label>SCC (sweet drinks consumption):</label><br>
+        <select name="SCC" required>
+            {% for s in options['SCC'] %}
+                <option value="{{ s }}">{{ s }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>SMOKE:</label><br>
+        <select name="SMOKE" required>
+            {% for s in options['SMOKE'] %}
+                <option value="{{ s }}">{{ s }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>CH2O (daily water intake):</label><br>
+        <input type="number" step="0.1" min="0" max="3" name="CH2O" required><br><br>
+
+        <label>Family History with Overweight:</label><br>
+        <select name="family_history_with_overweight" required>
+            {% for fh in options['family_history_with_overweight'] %}
+                <option value="{{ fh }}">{{ fh }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>FAF (physical activity frequency):</label><br>
+        <input type="number" step="1" min="0" max="3" name="FAF" required><br><br>
+
+        <label>TUE (time using tech devices):</label><br>
+        <input type="number" step="1" min="0" max="10" name="TUE" required><br><br>
+
+        <label>CAEC (food between meals):</label><br>
+        <select name="CAEC" required>
+            {% for c in options['CAEC'] %}
+                <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>MTRANS (transportation method):</label><br>
+        <select name="MTRANS" required>
+            {% for m in options['MTRANS'] %}
+                <option value="{{ m }}">{{ m }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <button type="submit">🔮 Predict</button>
+    </form>
+
+    {% if prediction %}
+        <h2>📊 Prediction: {{ prediction }}</h2>
+    {% endif %}
+</body>
+</html>
