@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder # Tambahkan LabelEncoder
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder 
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.neighbors import KNeighborsClassifier
@@ -35,6 +35,9 @@ def train_and_save_knn_model():
         print(f"Terjadi kesalahan saat memuat dataset: {e}")
         return
     
+    # inisialisasi dengan daftar fitur numerik lengkap termasuk BMI sebagai default
+    numerical_features = ['Age', 'Height', 'Weight', 'BMI', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
+
     # DATA PREPROCESSING
     # tambahkan kolom BMI
     if 'BMI' not in df.columns:
@@ -44,9 +47,8 @@ def train_and_save_knn_model():
             df['Weight'] = pd.to_numeric(df['Weight'], errors='coerce')
             
             # hitung BMI hanya jika Height valid (tidak nol atau NaN)
-            # isi NaN di BMI yang mungkin muncul dari Height=0 atau NaN
             valid_height_mask = df['Height'].notna() & (df['Height'] != 0)
-            df['BMI'] = np.nan
+            df['BMI'] = np.nan # Inisialisasi kolom BMI dengan NaN
             df.loc[valid_height_mask, 'BMI'] = df.loc[valid_height_mask, 'Weight'] / (df.loc[valid_height_mask, 'Height']**2)
             
             if df['BMI'].isnull().any():
@@ -56,31 +58,67 @@ def train_and_save_knn_model():
         else:
             print("Warning: Kolom 'Height' atau 'Weight' tidak ditemukan. Tidak dapat menghitung BMI.")
             # jika BMI tidak dapat dihitung, hapus BMI dari numerical_features
-            if 'BMI' in numerical_features:
+            if 'BMI' in numerical_features: # pastikan 'BMI' ada di daftar awal sebelum dihapus
                 numerical_features.remove('BMI')
 
+
     target_column = 'NObeyesdad'
-    numerical_features = ['Age', 'Height', 'Weight', 'BMI', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
     categorical_features = ['Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE', 'SCC', 'CALC', 'MTRANS']
 
-    # memastikan semua fitur yang diidentifikasi ada di DataFrame
-    # jika BMI tidak ada karena warning sebelumnya, pastikan dia tidak termasuk
+    # pastikan semua fitur yang diidentifikasi ada di DataFrame
+    # Baris ini sekarang aman karena numerical_features selalu didefinisikan
     final_numerical_features = [f for f in numerical_features if f in df.columns]
     final_categorical_features = [f for f in categorical_features if f in df.columns]
 
     X = df[final_numerical_features + final_categorical_features].copy()
     Y = df[target_column].copy()
 
-    # encode label target Y
+    # encode label target Y sebelum outlier removal agar Y_encoded dan X tetap sinkron
     label_encoder = LabelEncoder()
     Y_encoded = label_encoder.fit_transform(Y)
-    
-    # simpan mapping label
     print(f"Label target berhasil di-encode: {list(label_encoder.classes_)}")
 
-    # menangani missing values (pada X)
+    # REMOVE OUTLIERS
+    print("\nMendeteksi dan menghapus outlier...")
+    initial_rows = X.shape[0] # jumlah baris awal sebelum penghapusan outlier
+    
+    # buat DataFrame sementara untuk outlier removal agar tidak memodifikasi X dan Y asli terlalu cepat
+    temp_df_for_outliers = pd.concat([X, pd.Series(Y_encoded, index=X.index, name='Y_encoded_temp')], axis=1)
+
     for col in final_numerical_features:
-        X[col] = pd.to_numeric(X[col], errors='coerce')
+        # hanya proses kolom jika ada di temp_df_for_outliers
+        if col in temp_df_for_outliers.columns:
+            Q1 = temp_df_for_outliers[col].quantile(0.25)
+            Q3 = temp_df_for_outliers[col].quantile(0.75)
+            IQR = Q3 - Q1
+            
+            lower_bound = Q1 - 1.5 * IQR
+            upper_bound = Q3 + 1.5 * IQR
+            
+            # buat mask untuk outlier
+            outlier_mask = (temp_df_for_outliers[col] < lower_bound) | \
+                           (temp_df_for_outliers[col] > upper_bound)
+            
+            if outlier_mask.any():
+                rows_before_col_removal = temp_df_for_outliers.shape[0]
+                temp_df_for_outliers = temp_df_for_outliers[~outlier_mask].copy() # Hapus baris outlier
+                rows_removed_this_col = rows_before_col_removal - temp_df_for_outliers.shape[0]
+                print(f"  {rows_removed_this_col} baris dihapus karena outlier di '{col}'. Sisa baris: {temp_df_for_outliers.shape[0]}")
+            else:
+                print(f"  Tidak ada outlier signifikan di '{col}' berdasarkan metode IQR.")
+        else:
+            print(f"  Kolom '{col}' tidak ditemukan di DataFrame untuk deteksi outlier.")
+
+    rows_removed = initial_rows - temp_df_for_outliers.shape[0]
+    print(f"Total baris dihapus karena outlier: {rows_removed} ({rows_removed / initial_rows * 100:.2f}%)")
+
+    # update X dan Y_encoded ke versi yang sudah dibersihkan dari outlier
+    X = temp_df_for_outliers[final_numerical_features + final_categorical_features].copy()
+    Y_encoded = temp_df_for_outliers['Y_encoded_temp'].copy()
+
+    # menangani missing values pada X
+    for col in final_numerical_features:
+        X[col] = pd.to_numeric(X[col], errors='coerce') # memastikan numerik
         if X[col].isnull().any():
             median_val = X[col].median()
             X[col] = X[col].fillna(median_val)
@@ -116,6 +154,7 @@ def train_and_save_knn_model():
     }
 
     # bagi dataset menjadi 80% data training dan 20% test data
+    # gunakan Y_encoded yang sudah bersih dari outlier
     X_train, X_test, y_train_encoded, y_test_encoded = train_test_split(X, Y_encoded, test_size=0.2, random_state=42, stratify=Y_encoded)
     
     # mencari hyperparameter terbaik untuk metode KNN
@@ -141,6 +180,7 @@ def train_and_save_knn_model():
     print("\nLaporan Klasifikasi:")
     print(classification_report(y_test_original, y_pred_original))
     print("\nConfusion Matrix:")
+    
     # confusion matrix menggunakan label asli yang sudah diurutkan
     sorted_labels = label_encoder.classes_ 
     cm = confusion_matrix(y_test_original, y_pred_original, labels=sorted_labels)
@@ -149,7 +189,7 @@ def train_and_save_knn_model():
 
     # simpan pipeline terbaik (termasuk preprocessor dan classifier) dan label encoder untuk NObeyesdad
     joblib.dump(best_knn_pipeline, MODEL_PATH)
-    joblib.dump(label_encoder, os.path.join(MODEL_DIR, 'label_encoder.pkl'))
+    joblib.dump(label_encoder, os.path.join(MODEL_DIR, 'label_encoder.pkl')) # Simpan juga LabelEncoder
     print(f"Model terbaik berhasil disimpan sebagai '{MODEL_NAME}' di '{MODEL_DIR}/'.")
     print(f"LabelEncoder berhasil disimpan sebagai 'label_encoder.pkl' di '{MODEL_DIR}/'.")
 
