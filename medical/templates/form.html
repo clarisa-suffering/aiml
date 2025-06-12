@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Insurance Premium Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+        }
+        label, input {
+            display: block;
+            margin: 10px 0;
+        }
+        input[type="submit"] {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Insurance Premium Prediction</h2>
+    <form method="post" action="/predict">
+        <label>Age: <input type="number" name="Age" required></label>
+        <label>Diabetes (0/1): <input type="number" name="Diabetes" required></label>
+        <label>Blood Pressure Problems (0/1): <input type="number" name="BloodPressureProblems" required></label>
+        <label>Any Transplants (0/1): <input type="number" name="AnyTransplants" required></label>
+        <label>Any Chronic Diseases (0/1): <input type="number" name="AnyChronicDiseases" required></label>
+        <label>Height (in cm): <input type="number" name="Height" required></label>
+        <label>Weight (in kg): <input type="number" name="Weight" required></label>
+        <label>Known Allergies (0/1): <input type="number" name="KnownAllergies" required></label>
+        <label>History of Cancer in Family (0/1): <input type="number" name="HistoryOfCancerInFamily" required></label>
+        <label>Number of Major Surgeries: <input type="number" name="NumberOfMajorSurgeries" required></label>
+
+        <input type="submit" value="Predict Premium">
+    </form>
+
+    {% if prediction %}
+        <h3>{{ prediction }}</h3>
+    {% endif %}
+</body>
+</html>
