@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import joblib
+import json
 
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.pipeline import Pipeline
@@ -10,24 +11,31 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from xgboost import XGBRegressor
 from catboost import CatBoostRegressor
+from sklearn.linear_model import LinearRegression
 
 # Load data
 df = pd.read_csv('data/Medicalpremium.csv')
 
-# Data checks
+# DATA CHECKS
+# Ukuran awal
 print("Initial shape:", df.shape)
+# Cek null values
 print("Checking for null values:\n", df.isnull().sum())
+# Cek tipe data
 print("Checking data types:\n", df.dtypes)
 
 # Drop duplicates
 df = df.drop_duplicates()
 
 # Split features and target
+# kolom target (y) = PremiumPrice, kolom lainnya menjadi (x)
 X = df.drop(columns=['PremiumPrice'])
 y = df['PremiumPrice']
 
 # Train-test split
+# 80% untuk training, 20% untuk testing
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
 
 # Helper function to evaluate and return metrics
 def evaluate_model(name, model, X_test, y_test):
@@ -38,6 +46,17 @@ def evaluate_model(name, model, X_test, y_test):
     return {'model': model, 'mae': mae, 'mse': mse, 'r2': r2}
 
 results = {}
+
+
+# --- Linear Regression sebagai BASELINE ---
+print("\nTraining Linear Regression...")
+lr_pipeline = Pipeline([
+    ('scaler', StandardScaler()),
+    ('model', LinearRegression())
+])
+lr_pipeline.fit(X_train, y_train)
+results['LinearRegression'] = evaluate_model("Linear Regression", lr_pipeline, X_test, y_test)
+
 
 # --- Random Forest with GridSearchCV ---
 print("\n🔍 Tuning Random Forest...")
@@ -82,6 +101,8 @@ cat_grid = GridSearchCV(cat_model, cat_param_grid, cv=3, scoring='neg_mean_squar
 cat_grid.fit(X_train, y_train)
 results['CatBoost'] = evaluate_model("CatBoost", cat_grid.best_estimator_, X_test, y_test)
 
+
+
 # --- Print All Results ---
 print("\n---  Model Comparison After Hyperparameter Tuning ---")
 for name, metrics in results.items():
@@ -96,3 +117,15 @@ best_model = results[best_model_name]['model']
 joblib.dump(best_model, 'model.pkl')
 
 print(f"\n Best Model: {best_model_name} (saved as model.pkl)")
+
+
+# --- Save Metrics as JSON --- (untuk menghasilkan range dinamis berdasarkan MAE)
+best_metrics = {
+    'mae': results[best_model_name]['mae'],
+    'mse': results[best_model_name]['mse'],
+    'r2': results[best_model_name]['r2']
+}
+with open('metrics.json', 'w') as f:
+    json.dump(best_metrics, f)
+
+print(f"\n Saved metrics for {best_model_name} to metrics.json")

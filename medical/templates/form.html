@@ -35,7 +35,7 @@
     </form>
 
     {% if prediction %}
-        <h3>{{ prediction }}</h3>
+        <h3>{{ prediction|safe }}</h3>
     {% endif %}
 </body>
 </html>
