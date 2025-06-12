@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<<<<<<< Updated upstream
+    <title>AI Diet Meal Recommender</title>
+</head>
+<body>
+    <h2>Input Your Data</h2>
+    <form method="post">
+        Age: <input type="number" name="age"><br>
+        Weight (kg): <input type="number" name="weight"><br>
+        Height (cm): <input type="number" name="height"><br>
+        Gender:
+        <select name="gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select><br>
+        Activity Level:
+        <select name="activity">
+            <option value="low">Low</option>
+            <option value="moderate">Moderate</option>
+            <option value="high">High</option>
+        </select><br>
+        Goal:
+        <select name="goal">
+            <option value="maintain">Maintain</option>
+            <option value="lose">Lose Weight</option>
+            <option value="gain">Gain Weight</option>
+        </select><br>
+        <button type="submit">Get Meal Plan</button>
+    </form>
+
+    {% if tdee %}
+    <h3>Your TDEE: {{ tdee }} kcal</h3>
+    <h4>Recommended Meals:</h4>
+    <ul>
+        <li><strong>Breakfast:</strong> {{ meals.breakfast }}</li>
+        <li><strong>Lunch:</strong> {{ meals.lunch }}</li>
+        <li><strong>Dinner:</strong> {{ meals.dinner }}</li>
+    </ul>
+    {% endif %}
+=======
+    <meta charset="UTF-8">
+    <title>Predict Obesity Category</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function updateSliderValue(id, val) {
+            document.getElementById(id + '_val').innerText = val;
+        }
+    </script>
+
+    <style>
+        input[type=range]::-webkit-slider-thumb {
+            background-color: #a855f7;
+            border: none;
+            height: 1.25rem;
+            width: 1.25rem;
+            border-radius: 9999px;
+            cursor: pointer;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            background-color: #a855f7;
+            border: none;
+            height: 1.25rem;
+            width: 1.25rem;
+            border-radius: 9999px;
+            cursor: pointer;
+        }
+
+        input[type=range] {
+            accent-color: #a855f7;
+        }
+    </style>
+</head>
+
+<body class="bg-purple-50 min-h-screen flex items-center justify-center p-6">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl p-10">
+        <h1 class="text-3xl font-bold text-center mb-8 text-purple-700">🔍 Predict Obesity Category</h1>
+
+        <form method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Standard Inputs -->
+            <div>
+                <label class="block text-sm font-semibold text-purple-800">Age</label>
+                <input type="number" name="Age" required
+                    class="w-full border border-purple-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-purple-500">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-purple-800">Gender</label>
+                <select name="Gender" required
+                    class="w-full border border-purple-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-purple-500">
+                    {% for g in options['Gender'] %}
+                    <option value="{{ g }}">{{ g }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-purple-800">Height (m)</label>
+                <input type="number" step="0.01" name="Height" required
+                    class="w-full border border-purple-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-purple-500">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-purple-800">Weight (kg)</label>
+                <input type="number" step="0.1" name="Weight" required
+                    class="w-full border border-purple-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-purple-500">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-purple-800">CALC</label>
+                <select name="CALC" required
+                    class="w-full border border-purple-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-purple-500">
+                    {% for c in options['CALC'] %}
+                    <option value="{{ c }}">{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-purple-800">FAVC</label>
+                <select name="FAVC" required
+                    class="w-full border border-purple-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-purple-500">
+                    {% for f in options['FAVC'] %}
+                    <option value="{{ f }}">{{ f }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- FCVC -->
+            <div>
+                <label class="block text-sm font-semibold text-purple-800 mb-1">
+                    FCVC (veggies freq): <span id="FCVC_val" class="text-purple-600 font-bold">0</span>
+                </label>
+                <input type="range" name="FCVC" min="0" max="5" step="1" value="0"
+                    class="w-full h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                    oninput="updateSliderValue('FCVC', this.value)">
+                <div class="flex justify-between text-xs text-purple-700 mt-1 px-[4px]">
+                    <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                </div>
+            </div>
+
+            <!-- NCP -->
+            <div>
+                <label class="block text-sm font-semibold text-purple-800 mb-1">
+                    NCP (main meals): <span id="NCP_val" class="text-purple-600 font-bold">0</span>
+                </label>
+                <input type="range" name="NCP" min="0" max="5" step="1" value="0"
+                    class="w-full h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                    oninput="updateSliderValue('NCP', this.value)">
+                <div class="flex justify-between text-xs text-purple-700 mt-1 px-[4px]">
+                    <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                </div>
+            </div>
+
+            <!-- SCC -->
+            <div>
+                <label class="block text-sm font-semibold text-purple-800">SCC</label>
+                <select name="SCC" required
+                    class="w-full border border-purple-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-purple-500">
+                    {% for s in options['SCC'] %}
+                    <option value="{{ s }}">{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- SMOKE -->
+            <div>
+                <label class="block text-sm font-semibold text-purple-800">SMOKE</label>
+                <select name="SMOKE" required
+                    class="w-full border border-purple-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-purple-500">
+                    {% for s in options['SMOKE'] %}
+                    <option value="{{ s }}">{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- CH2O -->
+            <div>
+                <label class="block text-sm font-semibold text-purple-800 mb-1">
+                    CH2O (water intake): <span id="CH2O_val" class="text-purple-600 font-bold">0</span>
+                </label>
+                <input type="range" name="CH2O" min="0" max="3" step="0.1" value="0"
+                    class="w-full h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                    oninput="updateSliderValue('CH2O', this.value)">
+                <div class="flex justify-between text-xs text-purple-700 mt-1 px-[4px]">
+                    <span>0</span><span>0.5</span><span>1</span><span>1.5</span><span>2</span><span>2.5</span><span>3</span>
+                </div>
+            </div>
+
+            <!-- Family History -->
+            <div>
+                <label class="block text-sm font-semibold text-purple-800">Family History</label>
+                <select name="family_history_with_overweight" required
+                    class="w-full border border-purple-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-purple-500">
+                    {% for fh in options['family_history_with_overweight'] %}
+                    <option value="{{ fh }}">{{ fh }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- FAF -->
+            <div>
+                <label class="block text-sm font-semibold text-purple-800 mb-1">
+                    FAF (activity freq): <span id="FAF_val" class="text-purple-600 font-bold">0</span>
+                </label>
+                <input type="range" name="FAF" min="0" max="3" step="1" value="0"
+                    class="w-full h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                    oninput="updateSliderValue('FAF', this.value)">
+                <div class="flex justify-between text-xs text-purple-700 mt-1 px-[4px]">
+                    <span>0</span><span>1</span><span>2</span><span>3</span>
+                </div>
+            </div>
+
+            <!-- TUE -->
+            <div>
+                <label class="block text-sm font-semibold text-purple-800 mb-1">
+                    TUE (tech time): <span id="TUE_val" class="text-purple-600 font-bold">0</span>
+                </label>
+                <input type="range" name="TUE" min="0" max="10" step="1" value="0"
+                    class="w-full h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer"
+                    oninput="updateSliderValue('TUE', this.value)">
+                <div class="flex justify-between text-xs text-purple-700 mt-1 px-[4px]">
+                    <span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span>
+                </div>
+            </div>
+
+            <!-- CAEC -->
+            <div>
+                <label class="block text-sm font-semibold text-purple-800">CAEC</label>
+                <select name="CAEC" required
+                    class="w-full border border-purple-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-purple-500">
+                    {% for c in options['CAEC'] %}
+                    <option value="{{ c }}">{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- MTRANS -->
+            <div>
+                <label class="block text-sm font-semibold text-purple-800">MTRANS</label>
+                <select name="MTRANS" required
+                    class="w-full border border-purple-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-purple-500">
+                    {% for m in options['MTRANS'] %}
+                    <option value="{{ m }}">{{ m }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="col-span-1 md:col-span-2 text-center mt-4">
+                <button type="submit"
+                    class="bg-purple-600 text-white px-8 py-3 rounded-xl shadow hover:bg-purple-700 transition-all">
+                    🔮 Predict
+                </button>
+            </div>
+        </form>
+
+        {% if prediction %}
+        <!-- Modal -->
+        <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md relative">
+                <button onclick="closeModal()"
+                    class="absolute top-2 right-2 text-gray-500 hover:text-purple-600 text-2xl font-bold">&times;</button>
+                <h2 class="text-2xl font-bold text-purple-700 mb-4 text-center">📊 Prediction Result</h2>
+                <p class="text-lg text-gray-700 text-center">You are classified as:</p>
+                <p class="text-2xl text-purple-600 font-extrabold mt-2 text-center">{{ prediction }}</p>
+            </div>
+        </div>
+
+        <script>
+            function closeModal() {
+                document.getElementById('modal').style.display = 'none';
+            }
+
+            // Buka modal secara otomatis
+            window.onload = function () {
+                const modal = document.getElementById('modal');
+                if (modal) modal.style.display = 'flex';
+            };
+        </script>
+        {% endif %}
+
+>>>>>>> Stashed changes
+</body>
+
+</html>
