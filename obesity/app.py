@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
+
 import joblib
 import pandas as pd
 import numpy as np
@@ -31,8 +32,17 @@ dropdown_options = {
     'MTRANS': sorted(df['MTRANS'].unique()),
 }
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
+
+@app.route('/start')
+def start():
+    return render_template('start.html')
+
+@app.route('/')
+def home():
+    return redirect(url_for('start'))  # Arahkan ke /start
+
+@app.route('/predict', methods=['GET', 'POST'])
+def predict():
     prediction = None
     if request.method == 'POST':
         try:
