@@ -37,5 +37,19 @@
     {% if prediction %}
         <h3>{{ prediction|safe }}</h3>
     {% endif %}
+
+
+    {% if recommendations %}
+        <h3>Potensi Penghematan Premi:</h3>
+        <ul>
+            {% for rec in recommendations %}
+            <li>
+                <strong>{{ rec.title }}</strong><br>
+                {{ rec.description | safe }}
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
 </body>
 </html>
