@@ -2,45 +2,6 @@
 <html lang="en">
 
 <head>
-<<<<<<< Updated upstream
-    <title>AI Diet Meal Recommender</title>
-</head>
-<body>
-    <h2>Input Your Data</h2>
-    <form method="post">
-        Age: <input type="number" name="age"><br>
-        Weight (kg): <input type="number" name="weight"><br>
-        Height (cm): <input type="number" name="height"><br>
-        Gender:
-        <select name="gender">
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-        </select><br>
-        Activity Level:
-        <select name="activity">
-            <option value="low">Low</option>
-            <option value="moderate">Moderate</option>
-            <option value="high">High</option>
-        </select><br>
-        Goal:
-        <select name="goal">
-            <option value="maintain">Maintain</option>
-            <option value="lose">Lose Weight</option>
-            <option value="gain">Gain Weight</option>
-        </select><br>
-        <button type="submit">Get Meal Plan</button>
-    </form>
-
-    {% if tdee %}
-    <h3>Your TDEE: {{ tdee }} kcal</h3>
-    <h4>Recommended Meals:</h4>
-    <ul>
-        <li><strong>Breakfast:</strong> {{ meals.breakfast }}</li>
-        <li><strong>Lunch:</strong> {{ meals.lunch }}</li>
-        <li><strong>Dinner:</strong> {{ meals.dinner }}</li>
-    </ul>
-    {% endif %}
-=======
     <meta charset="UTF-8">
     <title>Predict Obesity Category</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -283,7 +244,6 @@
         </script>
         {% endif %}
 
->>>>>>> Stashed changes
 </body>
 
 </html>

@@ -1,19 +1,3 @@
-<<<<<<< Updated upstream
-from flask import Flask, render_template, request
-from model import calculate_tdee, recommend_meals
-
-app = Flask(__name__)
-
-@app.route("/", methods=["GET", "POST"])
-def index():
-    if request.method == "POST":
-        age = int(request.form["age"])
-        weight = float(request.form["weight"])
-        height = float(request.form["height"])
-        gender = request.form["gender"]
-        activity = request.form["activity"]
-        goal = request.form["goal"]
-=======
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 
 import joblib
@@ -81,14 +65,18 @@ def predict():
                 'CAEC': request.form['CAEC'],
                 'MTRANS': request.form['MTRANS']
             }
->>>>>>> Stashed changes
 
-        tdee = calculate_tdee(gender, weight, height, age, activity, goal)
-        meals = recommend_meals(tdee)
+            df_input = pd.DataFrame([input_data])
+            df_input['BMI'] = df_input['Weight'] / (df_input['Height'] ** 2)  # jika pipeline butuh BMI
 
-        return render_template("index.html", tdee=tdee, meals=meals)
+            # Prediksi
+            y_pred = model.predict(df_input)
+            prediction = label_encoder.inverse_transform(y_pred)[0]
 
-    return render_template("index.html")
+        except Exception as e:
+            prediction = f"❌ Error: {e}"
 
-if __name__ == "__main__":
+    return render_template('index.html', options=dropdown_options, prediction=prediction)
+
+if __name__ == '__main__':
     app.run(debug=True)
