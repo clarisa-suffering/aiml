@@ -1,1 +1,17 @@
-{"mae": 986.5407449492177, "mse": 4270734.328040124, "r2": 0.8998486221793425}
+{
+    "mae": 986.5407449492177,
+    "mse": 4270734.328040124,
+    "r2": 0.8998486221793425,
+    "average_feature_values": {
+        "Age": 42,
+        "Diabetes": 0,
+        "BloodPressureProblems": 0,
+        "AnyTransplants": 0,
+        "AnyChronicDiseases": 0,
+        "Height": 168,
+        "Weight": 75,
+        "KnownAllergies": 0,
+        "HistoryOfCancerInFamily": 0,
+        "NumberOfMajorSurgeries": 1
+    }
+}

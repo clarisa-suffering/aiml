@@ -125,7 +125,21 @@ best_metrics = {
     'mse': results[best_model_name]['mse'],
     'r2': results[best_model_name]['r2']
 }
-with open('metrics.json', 'w') as f:
-    json.dump(best_metrics, f)
 
-print(f"\n Saved metrics for {best_model_name} to metrics.json")
+# analisa dataset untuk average feature values
+# pakai median untuk fitur numerik dan mode untuk fitur categorical
+calculated_average_feature_values = {}
+for col in X_train.columns:
+    if col in ['Age', 'Height', 'Weight', 'NumberOfMajorSurgeries']:
+        calculated_average_feature_values[col] = round(X_train[col].median())
+    elif col in ['Diabetes', 'BloodPressureProblems', 'AnyTransplants', 'AnyChronicDiseases', 'KnownAllergies', 'HistoryOfCancerInFamily']:
+        calculated_average_feature_values[col] = 0
+    else:
+        calculated_average_feature_values[col] = round(X_train[col].mean())
+
+best_metrics['average_feature_values'] = calculated_average_feature_values
+
+with open('metrics.json', 'w') as f:
+    json.dump(best_metrics, f, indent=4)
+
+print(f"\n Saved metrics for {best_model_name} and calculated average feature values to metrics.json")

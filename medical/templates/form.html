@@ -6,6 +6,7 @@
     <title>Prediksi Premi Asuransi Kesehatan</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Your existing CSS variables and general styles */
         :root {
             --primary-color: #28a745;
             --primary-dark: #1e7e34;
@@ -28,8 +29,9 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            flex-direction: column; /* Use column to stack main container and results below */
+            justify-content: flex-start; /* Align content to the top */
+            align-items: center;
             min-height: 100vh;
             line-height: 1.6;
             box-sizing: border-box;
@@ -41,9 +43,9 @@
             box-shadow: var(--shadow-medium);
             padding: 40px;
             width: 100%;
-            max-width: 850px; /* Slightly wider */
+            max-width: 850px;
             box-sizing: border-box;
-            margin-bottom: 30px; /* Space at bottom if content extends */
+            margin-bottom: 30px;
         }
 
         h1 {
@@ -95,7 +97,8 @@
             font-size: 0.95em;
         }
 
-        input[type="number"] {
+        input[type="number"],
+        select { /* Added select here */
             width: calc(100% - 22px);
             padding: 10px;
             border: 1px solid var(--border-color);
@@ -105,7 +108,8 @@
             box-sizing: border-box;
         }
 
-        input[type="number"]:focus {
+        input[type="number"]:focus,
+        select:focus { /* Added select here */
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
             outline: none;
@@ -153,7 +157,7 @@
             box-shadow: var(--shadow-light);
         }
 
-        .prediction-result, .recommendations-section, .error-message {
+        .prediction-result, .recommendations-section, .error-message, .plot-container { /* Added .plot-container */
             background-color: var(--card-bg);
             border-radius: 8px;
             padding: 25px;
@@ -170,7 +174,7 @@
             text-align: center;
         }
 
-        .prediction-result h3, .recommendations-section h3 {
+        .prediction-result h3, .recommendations-section h3, .plot-container h3 { /* Added .plot-container h3 */
             color: var(--primary-dark);
             margin-top: 0;
             margin-bottom: 15px;
@@ -183,6 +187,7 @@
         .recommendations-section {
             background-color: #eaf7ed;
             border-color: var(--primary-color);
+            margin-top: 20px; /* Adjust margin if needed */
         }
 
         .recommendations-section ul {
@@ -191,7 +196,7 @@
             text-align: left;
         }
 
-        .recommendations-section li {
+        .recommendation-item { /* Changed to class for consistency */
             background-color: #f8fcf9;
             border: 1px solid #d4edda;
             border-left: 5px solid var(--primary-color);
@@ -201,20 +206,21 @@
             box-shadow: var(--shadow-light);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .recommendations-section li:hover {
+        .recommendation-item:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow-medium);
         }
 
-        .recommendations-section li strong {
-            color: var(--primary-dark);
-            display: block;
-            margin-bottom: 5px;
-            font-size: 1.1em;
+        .recommendation-item strong, .prediction-result strong {
+            display: inline;
+            font-weight: 600;
+            line-height: inherit; 
         }
-        .recommendations-section li span {
+        .recommendation-item span {
+            display: block;
             font-size: 0.95em;
             color: var(--light-text-color);
+            margin-top: 5px;
         }
 
         .error-message {
@@ -226,6 +232,25 @@
             margin-top: 20px;
             text-align: center;
             font-weight: 500;
+        }
+
+        /* Styles for the plot container */
+        .plot-container {
+            margin-top: 20px; /* Space above the plot */
+            text-align: center;
+            background-color: #f8fcf9; /* Lighter background */
+            border-color: #d4edda; /* Border color matching recommendations */
+        }
+        .plot-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        .plot-container p {
+            font-size: 0.9em;
+            color: var(--light-text-color);
+            margin-top: 15px;
         }
 
         @media (max-width: 768px) {
@@ -261,52 +286,52 @@
             <div class="form-group">
                 <label for="age">Usia (Tahun):</label>
                 <input type="number" id="age" name="Age" required min="18" max="100" 
-                       value="{{ form_data.get('Age', '') }}">
+                        value="{{ form_data.get('Age', '') }}">
             </div>
             <div class="form-group">
                 <label for="diabetes">Diabetes (0: Tidak, 1: Ya):</label>
                 <input type="number" id="diabetes" name="Diabetes" required min="0" max="1" 
-                       value="{{ form_data.get('Diabetes', '') }}">
+                        value="{{ form_data.get('Diabetes', '') }}">
             </div>
             <div class="form-group">
                 <label for="bloodpressureproblems">Masalah Tekanan Darah (0: Tidak, 1: Ya):</label>
                 <input type="number" id="bloodpressureproblems" name="BloodPressureProblems" required min="0" max="1" 
-                       value="{{ form_data.get('BloodPressureProblems', '') }}">
+                        value="{{ form_data.get('BloodPressureProblems', '') }}">
             </div>
             <div class="form-group">
                 <label for="anytransplants">Riwayat Transplantasi Organ (0: Tidak, 1: Ya):</label>
                 <input type="number" id="anytransplants" name="AnyTransplants" required min="0" max="1" 
-                       value="{{ form_data.get('AnyTransplants', '') }}">
+                        value="{{ form_data.get('AnyTransplants', '') }}">
             </div>
             <div class="form-group">
                 <label for="anychronicdiseases">Penyakit Kronis (0: Tidak, 1: Ya):</label>
                 <input type="number" id="anychronicdiseases" name="AnyChronicDiseases" required min="0" max="1" 
-                       value="{{ form_data.get('AnyChronicDiseases', '') }}">
+                        value="{{ form_data.get('AnyChronicDiseases', '') }}">
             </div>
             <div class="form-group">
                 <label for="height">Tinggi Badan (cm):</label>
                 <input type="number" id="height" name="Height" required min="50" max="250" 
-                       value="{{ form_data.get('Height', '') }}">
+                        value="{{ form_data.get('Height', '') }}">
             </div>
             <div class="form-group">
                 <label for="weight">Berat Badan (kg):</label>
                 <input type="number" id="weight" name="Weight" required min="10" max="300" 
-                       value="{{ form_data.get('Weight', '') }}">
+                        value="{{ form_data.get('Weight', '') }}">
             </div>
             <div class="form-group">
                 <label for="knownallergies">Alergi (0: Tidak, 1: Ya):</label>
                 <input type="number" id="knownallergies" name="KnownAllergies" required min="0" max="1" 
-                       value="{{ form_data.get('KnownAllergies', '') }}">
+                        value="{{ form_data.get('KnownAllergies', '') }}">
             </div>
             <div class="form-group">
                 <label for="historyofcancerinfamily">Riwayat Kanker dalam Keluarga (0: Tidak, 1: Ya):</label>
                 <input type="number" id="historyofcancerinfamily" name="HistoryOfCancerInFamily" required min="0" max="1" 
-                       value="{{ form_data.get('HistoryOfCancerInFamily', '') }}">
+                        value="{{ form_data.get('HistoryOfCancerInFamily', '') }}">
             </div>
             <div class="form-group">
                 <label for="numberofmajorsurgeries">Jumlah Operasi Besar (0-3):</label>
                 <input type="number" id="numberofmajorsurgeries" name="NumberOfMajorSurgeries" required min="0" max="3" 
-                       value="{{ form_data.get('NumberOfMajorSurgeries', '') }}">
+                        value="{{ form_data.get('NumberOfMajorSurgeries', '') }}">
             </div>
 
             <div class="button-group">
@@ -326,20 +351,28 @@
                 <h3>Hasil Prediksi Premi</h3>
                 <p>{{ prediction|safe }}</p>
             </div>
-        {% endif %}
 
-        {% if recommendations %}
-            <div class="recommendations-section">
-                <h3>Potensi Penghematan Premi:</h3>
-                <ul>
-                    {% for rec in recommendations %}
-                        <li>
-                            <strong>{{ rec.title }}</strong><br>
-                            <span>{{ rec.description | safe }}</span>
-                        </li>
-                    {% endfor %}
-                </ul>
+            {% if feature_plot %}
+            <div class="plot-container">
+                <h3>Analisis Faktor Premi Anda</h3>
+                <img src="data:image/png;base64,{{ feature_plot }}" alt="Feature Contribution Plot">
+                <p style="font-size: 0.9em; color: var(--light-text-color);">*Grafik ini mengestimasi dampak relatif setiap faktor terhadap premi Anda, dibandingkan dengan baseline tanpa faktor risiko.</p>
             </div>
+            {% endif %}
+
+            {% if recommendations %}
+                <div class="recommendations-section">
+                    <h3>Potensi Penghematan Premi:</h3>
+                    <ul>
+                        {% for rec in recommendations %}
+                            <li class="recommendation-item">
+                                <strong>{{ rec.title }}</strong>
+                                <span>{{ rec.description | safe }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
         {% endif %}
     </div>
 </body>
