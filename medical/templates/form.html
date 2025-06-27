@@ -374,6 +374,23 @@
                 </div>
             {% endif %}
         {% endif %}
+        {% if risk_segment %}
+            {% set color = '#28a745' if 'Basic' in risk_segment else '#ffc107' if 'Moderate' in risk_segment else '#dc3545' %}
+            <div style="border: 2px solid {{ color }}; border-radius: 8px; padding: 20px; margin-top: 20px; background-color: #fefefe; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h2 style="color: {{ color }};">Segmentasi Risiko Anda</h2>
+                <p style="font-size: 1.2em;"><strong>{{ risk_segment }}</strong></p>
+                <p style="color: #555;">Kategori ini menunjukkan profil risiko Anda berdasarkan data yang dimasukkan. Gunakan informasi ini untuk memilih paket asuransi yang sesuai.</p>
+
+                <hr style="margin: 20px 0;">
+
+                <h3 style="color: #333;">Penjelasan Kategori:</h3>
+                <ul style="padding-left: 1.2em;">
+                    <li><strong style="color: #28a745;">Basic Plan (Risiko Rendah):</strong> Untuk pengguna sehat tanpa riwayat penyakit. Premi rendah dengan proteksi dasar.</li>
+                    <li><strong style="color: #ffc107;">Moderate Plan (Risiko Sedang):</strong> Untuk pengguna dengan beberapa risiko ringan seperti alergi atau tekanan darah tinggi. Premi sedang dengan perlindungan tambahan.</li>
+                    <li><strong style="color: #dc3545;">Premium Plan (Risiko Tinggi):</strong> Untuk pengguna dengan risiko tinggi, seperti penyakit kronis, riwayat operasi besar, atau obesitas. Premi lebih tinggi untuk perlindungan maksimal.</li>
+                </ul>
+            </div>
+        {% endif %}
     </div>
 </body>
 </html>

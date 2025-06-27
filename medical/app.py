@@ -91,6 +91,20 @@ controllable_features_map = {
     # 'HistoryOfCancerInFamily' juga tidak bisa dikendalikan
 }
 
+# --- Load KMeans Model and Scaler ---
+KMEANS_MODEL_PATH = 'kmeans_model.pkl'
+SCALER_PATH = 'scaler_kmeans.pkl'
+
+kmeans_model = None
+scaler_kmeans = None
+
+if os.path.exists(KMEANS_MODEL_PATH) and os.path.exists(SCALER_PATH):
+    kmeans_model = joblib.load(KMEANS_MODEL_PATH)
+    scaler_kmeans = joblib.load(SCALER_PATH)
+    print("KMeans model dan scaler loaded.")
+else:
+    print("Model clustering tidak ditemukan.")
+
 def create_feature_contribution_plot(user_input_list, model, feature_names, average_feature_values_dict, current_prediction):
     contributions = {}
 
@@ -321,6 +335,24 @@ def predict():
         input_form_data = {name: int(request.form[name]) for name in feature_names}
         input_features_list = [input_form_data[name] for name in feature_names]
 
+        # Scaling fitur untuk clustering
+        user_input_scaled = scaler_kmeans.transform([input_features_list])
+        cluster = kmeans_model.predict(user_input_scaled)[0]
+
+        # Mapping cluster ke segmen
+        # cluster_labels = {
+        #     0: 'Basic Plan (Risiko Rendah)',
+        #     1: 'Moderate Plan (Risiko Sedang)',
+        #     2: 'Premium Plan (Risiko Tinggi)'
+        # }
+        cluster_labels = {
+            0: 'Premium Plan (Risiko Tinggi)',
+            1: 'Moderate Plan (Risiko Sedang)',
+            2: 'Basic Plan (Risiko Rendah)'
+        }
+        # Kamu bisa atur ulang mapping ini setelah melihat hasil analisis
+        cluster_label = cluster_labels[cluster]
+
         if not average_feature_values or baseline_premi_value == 0:
          return render_template('form.html', error="Kesalahan konfigurasi: Data baseline belum termuat lengkap. Mohon jalankan ulang train_model.py dan pastikan tidak ada error di startup app.py.", form_data=request.form)
         
@@ -349,7 +381,8 @@ def predict():
                                prediction=prediction_html, 
                                recommendations=savings, 
                                form_data=input_form_data,
-                               feature_plot=feature_plot_url)
+                               feature_plot=feature_plot_url,
+                               risk_segment=cluster_label)
     
     except ValueError:
         # Handle cases where input is not an integer or is out of expected range (e.g., empty string)
@@ -360,6 +393,8 @@ def predict():
     except Exception as e:
         # Catch any other unexpected errors
         return render_template('form.html', error=f"Terjadi kesalahan saat memproses: {str(e)}. Mohon coba lagi nanti.", form_data=request.form)
+    
+
 
 
 if __name__ == '__main__':
