@@ -138,7 +138,8 @@
             user-select: none;
         }
 
-        input[type="number"], select {
+        input[type="number"],
+        select {
             padding: 10px 14px;
             font-size: 1rem;
             border-radius: 10px;
@@ -147,7 +148,8 @@
             outline-offset: 2px;
         }
 
-        input[type="number"]:focus, select:focus {
+        input[type="number"]:focus,
+        select:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 8px var(--primary-color);
         }
@@ -174,12 +176,8 @@
             margin-top: 30px;
         }
 
-<<<<<<< HEAD
         input[type="submit"],
         button[type="reset"] {
-=======
-        input[type="submit"], button[type="reset"] {
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
             flex: 1 1 250px;
             padding: 15px 0;
             font-weight: 700;
@@ -223,13 +221,9 @@
             text-align: center;
         }
 
-<<<<<<< HEAD
         .prediction-result,
         .recommendations-section,
         .plot-container {
-=======
-        .prediction-result, .recommendations-section, .plot-container {
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
             background: #e6f4ea;
             border: 1.5px solid var(--primary-color);
             border-radius: 12px;
@@ -313,38 +307,23 @@
             box-shadow: var(--shadow-medium);
             padding: 30px 35px;
             text-align: center;
-<<<<<<< HEAD
             margin-left: auto;
             margin-right: auto;
             border: 3px solid;
             color: #444;
-=======
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            border: 3px solid;
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
         }
 
         .risk-segment h2 {
             margin: 0 0 15px;
             font-weight: 800;
             font-size: 1.9rem;
-<<<<<<< HEAD
             color: #444;
-=======
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
         }
 
         .risk-segment p.desc {
             font-weight: 500;
-<<<<<<< HEAD
             font-size: 1.5rem;
             color: inherit;
-=======
-            font-size: 1.1rem;
-            color: #444;
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
             margin-bottom: 25px;
         }
 
@@ -360,10 +339,7 @@
             margin-bottom: 12px;
             font-weight: 600;
             font-size: 1rem;
-<<<<<<< HEAD
             color: #444;
-=======
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
         }
 
         .risk-segment ul li strong {
@@ -401,12 +377,8 @@
                 flex-direction: column;
             }
 
-<<<<<<< HEAD
             input[type="submit"],
             button[type="reset"] {
-=======
-            input[type="submit"], button[type="reset"] {
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
                 width: 100%;
             }
 
@@ -444,61 +416,29 @@
         <form method="post" action="/predict" novalidate>
             <div class="form-group">
                 <label for="age">Usia (Tahun):</label>
-<<<<<<< HEAD
                 <input type="number" id="age" name="Age" min="18" max="100" required placeholder="Contoh: 35"
                     value="{{ form_data.get('Age', '') }}" />
-=======
-                <input
-                    type="number"
-                    id="age"
-                    name="Age"
-                    min="18"
-                    max="100"
-                    required
-                    placeholder="Contoh: 35"
-                    value="{{ form_data.get('Age', '') }}"
-                />
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
             </div>
 
             <div class="form-group">
                 <label for="diabetes">Diabetes:</label>
                 <select id="diabetes" name="Diabetes" required>
                     <option value="" disabled selected>Pilih status</option>
-<<<<<<< HEAD
                     <option value="0" {% if form_data.get('Diabetes')==0 %}selected{% endif %}>Tidak</option>
                     <option value="1" {% if form_data.get('Diabetes')==1 %}selected{% endif %}>Ya</option>
-=======
-                    <option value="0" {% if form_data.get('Diabetes') == 0 %}selected{% endif %}>Tidak</option>
-                    <option value="1" {% if form_data.get('Diabetes') == 1 %}selected{% endif %}>Ya</option>
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="height">Tinggi Badan (cm):</label>
-<<<<<<< HEAD
                 <input type="number" id="height" name="Height" min="50" max="250" required placeholder="Contoh: 165"
                     value="{{ form_data.get('Height', '') }}" />
-=======
-                <input
-                    type="number"
-                    id="height"
-                    name="Height"
-                    min="50"
-                    max="250"
-                    required
-                    placeholder="Contoh: 165"
-                    value="{{ form_data.get('Height', '') }}"
-                />
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
             </div>
 
             <div class="form-group">
                 <label for="bloodpressureproblems">Masalah Tekanan Darah:</label>
                 <select id="bloodpressureproblems" name="BloodPressureProblems" required>
                     <option value="" disabled selected>Pilih status</option>
-<<<<<<< HEAD
                     <option value="0" {% if form_data.get('BloodPressureProblems')==0 %}selected{% endif %}>Tidak
                     </option>
                     <option value="1" {% if form_data.get('BloodPressureProblems')==1 %}selected{% endif %}>Ya</option>
@@ -509,40 +449,16 @@
                 <label for="weight">Berat Badan (kg):</label>
                 <input type="number" id="weight" name="Weight" min="10" max="300" required placeholder="Contoh: 65"
                     value="{{ form_data.get('Weight', '') }}" />
-=======
-                    <option value="0" {% if form_data.get('BloodPressureProblems') == 0 %}selected{% endif %}>Tidak</option>
-                    <option value="1" {% if form_data.get('BloodPressureProblems') == 1 %}selected{% endif %}>Ya</option>
-                </select>
-            </div>
-                        
-            <div class="form-group">
-                <label for="weight">Berat Badan (kg):</label>
-                <input
-                    type="number"
-                    id="weight"
-                    name="Weight"
-                    min="10"
-                    max="300"
-                    required
-                    placeholder="Contoh: 65"
-                    value="{{ form_data.get('Weight', '') }}"
-                />
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
             </div>
 
             <div class="form-group">
                 <label for="historyofcancerinfamily">Riwayat Kanker dalam Keluarga:</label>
                 <select id="historyofcancerinfamily" name="HistoryOfCancerInFamily" required>
                     <option value="" disabled selected>Pilih status</option>
-<<<<<<< HEAD
                     <option value="0" {% if form_data.get('HistoryOfCancerInFamily')==0 %}selected{% endif %}>Tidak
                     </option>
                     <option value="1" {% if form_data.get('HistoryOfCancerInFamily')==1 %}selected{% endif %}>Ya
                     </option>
-=======
-                    <option value="0" {% if form_data.get('HistoryOfCancerInFamily') == 0 %}selected{% endif %}>Tidak</option>
-                    <option value="1" {% if form_data.get('HistoryOfCancerInFamily') == 1 %}selected{% endif %}>Ya</option>
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
                 </select>
             </div>
 
@@ -550,13 +466,8 @@
                 <label for="knownallergies">Alergi:</label>
                 <select id="knownallergies" name="KnownAllergies" required>
                     <option value="" disabled selected>Pilih status</option>
-<<<<<<< HEAD
                     <option value="0" {% if form_data.get('KnownAllergies')==0 %}selected{% endif %}>Tidak</option>
                     <option value="1" {% if form_data.get('KnownAllergies')==1 %}selected{% endif %}>Ya</option>
-=======
-                    <option value="0" {% if form_data.get('KnownAllergies') == 0 %}selected{% endif %}>Tidak</option>
-                    <option value="1" {% if form_data.get('KnownAllergies') == 1 %}selected{% endif %}>Ya</option>
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
                 </select>
             </div>
 
@@ -564,13 +475,8 @@
                 <label for="anytransplants">Riwayat Transplantasi Organ:</label>
                 <select id="anytransplants" name="AnyTransplants" required>
                     <option value="" disabled selected>Pilih status</option>
-<<<<<<< HEAD
                     <option value="0" {% if form_data.get('AnyTransplants')==0 %}selected{% endif %}>Tidak</option>
                     <option value="1" {% if form_data.get('AnyTransplants')==1 %}selected{% endif %}>Ya</option>
-=======
-                    <option value="0" {% if form_data.get('AnyTransplants') == 0 %}selected{% endif %}>Tidak</option>
-                    <option value="1" {% if form_data.get('AnyTransplants') == 1 %}selected{% endif %}>Ya</option>
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
                 </select>
             </div>
 
@@ -578,33 +484,15 @@
                 <label for="anychronicdiseases">Penyakit Kronis:</label>
                 <select id="anychronicdiseases" name="AnyChronicDiseases" required>
                     <option value="" disabled selected>Pilih status</option>
-<<<<<<< HEAD
                     <option value="0" {% if form_data.get('AnyChronicDiseases')==0 %}selected{% endif %}>Tidak</option>
                     <option value="1" {% if form_data.get('AnyChronicDiseases')==1 %}selected{% endif %}>Ya</option>
-=======
-                    <option value="0" {% if form_data.get('AnyChronicDiseases') == 0 %}selected{% endif %}>Tidak</option>
-                    <option value="1" {% if form_data.get('AnyChronicDiseases') == 1 %}selected{% endif %}>Ya</option>
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="numberofmajorsurgeries">Jumlah Operasi Besar (0-3):</label>
-<<<<<<< HEAD
                 <input type="number" id="numberofmajorsurgeries" name="NumberOfMajorSurgeries" min="0" max="3" required
                     placeholder="Contoh: 1" value="{{ form_data.get('NumberOfMajorSurgeries', '') }}" />
-=======
-                <input
-                    type="number"
-                    id="numberofmajorsurgeries"
-                    name="NumberOfMajorSurgeries"
-                    min="0"
-                    max="3"
-                    required
-                    placeholder="Contoh: 1"
-                    value="{{ form_data.get('NumberOfMajorSurgeries', '') }}"
-                />
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
             </div>
 
             <div class="button-group">
@@ -620,7 +508,6 @@
         {% endif %}
 
         {% if prediction %}
-<<<<<<< HEAD
         <div class="prediction-result" role="region" aria-live="polite" aria-atomic="true">
             <h3>Hasil Prediksi Premi</h3>
             <p>{{ prediction|safe }}</p>
@@ -671,49 +558,6 @@
                 <li><strong style="color: var(--danger-color)">Premium Plan (Risiko Tinggi):</strong> Pengguna dengan
                     risiko tinggi seperti penyakit kronis, riwayat operasi besar, atau obesitas. Premi lebih tinggi
                     untuk perlindungan maksimal.</li>
-=======
-            <div class="prediction-result" role="region" aria-live="polite" aria-atomic="true">
-                <h3>Hasil Prediksi Premi</h3>
-                <p>{{ prediction|safe }}</p>
-            </div>
-
-            {% if feature_plot %}
-            <div class="plot-container" role="img" aria-label="Grafik kontribusi fitur pada premi">
-                <h3>Analisis Faktor Premi Anda</h3>
-                <img src="data:image/png;base64,{{ feature_plot }}" alt="Feature Contribution Plot" />
-                <p>*Grafik ini mengestimasi dampak relatif setiap faktor terhadap premi Anda, dibandingkan baseline tanpa faktor risiko.</p>
-            </div>
-            {% endif %}
-
-            {% if recommendations %}
-            <div class="recommendations-section">
-                <h3>Potensi Penghematan Premi:</h3>
-                <ul>
-                    {% for rec in recommendations %}
-                    <li class="recommendation-item">
-                        <strong>{{ rec.title }}</strong>
-                        <span>{{ rec.description | safe }}</span>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-        {% endif %}
-
-        {% if risk_segment %}
-        {% set color = '#28a745' if 'Basic' in risk_segment else '#ffc107' if 'Moderate' in risk_segment else '#e74c3c' %}
-        {% set class_name = 'risk-basic' if 'Basic' in risk_segment else 'risk-moderate' if 'Moderate' in risk_segment else 'risk-premium' %}
-        <div class="risk-segment {{ class_name }}" role="region" aria-live="polite" aria-atomic="true">
-            <h2>Segmentasi Risiko Anda</h2>
-            <p class="desc"><strong>{{ risk_segment }}</strong></p>
-            <p>Kategori ini menunjukkan profil risiko Anda berdasarkan data yang dimasukkan. Gunakan informasi ini untuk memilih paket asuransi yang sesuai.</p>
-            <hr />
-            <h3>Penjelasan Kategori:</h3>
-            <ul>
-                <li><strong style="color: var(--primary-color)">Basic Plan (Risiko Rendah):</strong> Pengguna sehat tanpa riwayat penyakit. Premi rendah dengan proteksi dasar.</li>
-                <li><strong style="color: var(--accent-color)">Moderate Plan (Risiko Sedang):</strong> Pengguna dengan risiko ringan seperti alergi atau tekanan darah tinggi. Premi sedang dengan perlindungan tambahan.</li>
-                <li><strong style="color: var(--danger-color)">Premium Plan (Risiko Tinggi):</strong> Pengguna dengan risiko tinggi seperti penyakit kronis, riwayat operasi besar, atau obesitas. Premi lebih tinggi untuk perlindungan maksimal.</li>
->>>>>>> 7b4c6dcc2e515c16e8c9cb6cdac7115b68286a91
             </ul>
         </div>
         {% endif %}
