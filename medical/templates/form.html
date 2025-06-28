@@ -8,18 +8,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --primary-color: #28a745;
+            --primary-color: #28a745; /* Green */
             --primary-dark: #1e7e34;
-            --secondary-color: #007bff;
-            --accent-color: #ffc107;
-            --bg-color: #f8fafc;
-            --text-color: #2d3436;
-            --light-text-color: #636e72;
-            --border-color: #d1d8e0;
-            --card-bg: #fff;
-            --shadow-light: 0 2px 6px rgba(0, 0, 0, 0.1);
-            --shadow-medium: 0 6px 15px rgba(0, 0, 0, 0.15);
-            --danger-color: #e74c3c;
+            --secondary-color: #007bff; /* Blue */
+            --accent-color: #ffc107; /* Yellow */
+            --bg-color: #f8fafc; /* Light Gray */
+            --text-color: #2d3436; /* Dark Gray */
+            --light-text-color: #636e72; /* Medium Gray */
+            --border-color: #d1d8e0; /* Light Border */
+            --card-bg: #fff; /* White */
+            --shadow-light: 0 4px 10px rgba(0, 0, 0, 0.08); /* Slightly softer shadow */
+            --shadow-medium: 0 8px 20px rgba(0, 0, 0, 0.15); /* More pronounced shadow */
+            --danger-color: #e74c3c; /* Red */
         }
 
         * {
@@ -36,162 +36,280 @@
             justify-content: center;
             min-height: 100vh;
             line-height: 1.5;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
         .container {
             background: var(--card-bg);
-            border-radius: 14px;
+            border-radius: 18px; /* Slightly more rounded */
             box-shadow: var(--shadow-medium);
             max-width: 900px;
             width: 100%;
             padding: 40px 50px;
+            margin-top: 20px; /* Adjusted margin */
+            margin-bottom: 20px; /* Adjusted margin */
+            opacity: 0; /* Hidden initially for entrance animation */
+            transform: translateY(20px);
+            animation: fadeInSlideUp 0.8s forwards ease-out; /* Main container animation */
+        }
+
+        @keyframes fadeInSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
             text-align: center;
             font-weight: 700;
-            font-size: 2.4rem;
+            font-size: 2.6rem; /* Slightly larger */
             color: var(--primary-dark);
-            margin-bottom: 15px;
+            margin-bottom: 20px; /* Increased margin */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05); /* Subtle text shadow */
         }
 
         p.subtitle {
             text-align: center;
             color: var(--light-text-color);
-            font-size: 1rem;
+            font-size: 1.05rem; /* Slightly larger */
             margin-bottom: 40px;
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
-            line-height: 1.6;
+            line-height: 1.7;
         }
 
         form {
-            display: grid; /* Keep original grid for form inputs */
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 22px 35px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjusted for better spacing */
+            gap: 30px 50px; /* Increased gap for better spacing */
+            padding: 40px; /* Increased padding */
+            border-radius: 18px; /* Match container radius */
+            position: relative; /* For gradient background */
+            overflow: hidden; /* Ensure gradient stays within bounds */
+
+            /* Animated Gradient Background */
+            background: linear-gradient(270deg, #e6ffe6, #cff0ff, #e6ffe6); /* Light green, light blue */
+            background-size: 600% 600%; /* Larger background to animate */
+            animation: gradientAnimation 15s ease infinite; /* Slow, smooth animation */
+            box-shadow: var(--shadow-medium); /* Add shadow to the form itself */
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
+            position: relative; /* For tooltip positioning */
+            z-index: 1; /* Ensure form elements are above gradient */
         }
 
         label {
             font-weight: 600;
-            margin-bottom: 6px;
-            font-size: 0.95rem;
+            margin-bottom: 10px; /* Increased margin */
+            font-size: 1.05rem; /* Slightly larger */
             color: var(--text-color);
             user-select: none;
-            display: flex; /* Allow icon next to label */
+            display: flex;
             align-items: center;
+            gap: 8px; /* Space between label text and icon */
+        }
+
+        .tooltip-icon {
+            position: relative;
+            cursor: help;
+            color: var(--secondary-color);
+            font-size: 0.9em;
+        }
+
+        .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px 15px;
+            position: absolute;
+            z-index: 10; /* High z-index to be above other elements */
+            bottom: 125%; /* Position above the icon */
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            box-shadow: var(--shadow-light);
+            pointer-events: none; /* Allow clicks to pass through when hidden */
+        }
+
+        .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .tooltip-icon:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px); /* Slight lift on hover */
         }
 
         input[type="number"], select {
-            padding: 10px 14px;
+            padding: 14px 18px; /* Increased padding */
             font-size: 1rem;
-            border-radius: 10px;
-            border: 1.8px solid var(--border-color);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            outline-offset: 2px;
+            border-radius: 12px; /* More rounded */
+            border: 2px solid var(--border-color); /* Slightly thicker border */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            outline: none; /* Remove default outline */
+            background-color: var(--card-bg); /* Ensure consistent background */
+            color: var(--text-color);
         }
 
         input[type="number"]:focus, select:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 8px var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.25); /* Softer, larger focus ring */
+            background-color: #fdfdfd; /* Slight background change on focus */
         }
 
         select {
             cursor: pointer;
-            appearance: none;
-            background-color: white;
+            appearance: none; /* Remove default select arrow */
             background-image:
                 linear-gradient(45deg, transparent 50%, var(--text-color) 50%),
                 linear-gradient(135deg, var(--text-color) 50%, transparent 50%);
             background-position:
-                calc(100% - 20px) calc(1em + 2px),
-                calc(100% - 15px) calc(1em + 2px);
-            background-size: 5px 5px;
+                calc(100% - 22px) calc(0.9em + 2px), /* Adjusted arrow position */
+                calc(100% - 17px) calc(0.9em + 2px);
+            background-size: 6px 6px; /* Slightly larger arrow */
             background-repeat: no-repeat;
         }
 
         .button-group {
             grid-column: 1 / -1;
             display: flex;
-            gap: 20px;
+            gap: 25px; /* Increased gap */
             justify-content: center;
-            margin-top: 30px;
+            margin-top: 40px; /* Increased margin */
+            z-index: 1; /* Ensure buttons are above gradient */
         }
 
         input[type="submit"], button[type="reset"] {
-            flex: 1 1 250px;
-            padding: 15px 0;
+            flex: 1 1 280px; /* Slightly wider buttons */
+            padding: 16px 0; /* Increased padding */
             font-weight: 700;
-            font-size: 1.15rem;
-            border-radius: 12px;
+            font-size: 1.2rem; /* Slightly larger font */
+            border-radius: 14px; /* More rounded */
             border: none;
             cursor: pointer;
-            transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+            letter-spacing: 0.5px; /* Add subtle letter spacing */
+            text-transform: uppercase; /* Uppercase text */
         }
 
         input[type="submit"] {
             background-color: var(--primary-color);
             color: #fff;
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.25);
         }
 
         input[type="submit"]:hover {
             background-color: var(--primary-dark);
-            box-shadow: var(--shadow-light);
-            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.35);
+            transform: translateY(-4px); /* More pronounced lift */
         }
 
         button[type="reset"] {
-            background-color: #7f8c8d;
+            background-color: #7f8c8d; /* Muted gray */
             color: #fff;
+            box-shadow: 0 6px 15px rgba(127, 140, 141, 0.25);
         }
 
         button[type="reset"]:hover {
             background-color: #636e72;
-            box-shadow: var(--shadow-light);
-            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(99, 110, 112, 0.35);
+            transform: translateY(-4px);
+        }
+
+        .loading-indicator {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.6; }
+            to { opacity: 1; }
         }
 
         .error-message {
             background-color: #fce4e4;
-            border: 1.5px solid var(--danger-color);
+            border: 2px solid var(--danger-color); /* Thicker border */
             color: var(--danger-color);
             font-weight: 600;
-            padding: 18px 20px;
+            padding: 20px; /* Increased padding */
             border-radius: 12px;
-            margin-top: 25px;
+            margin-top: 35px; /* Increased margin */
             text-align: center;
-        }
-
-        .prediction-result, .recommendations-section, .plot-container {
-            background: #e6f4ea;
-            border: 1.5px solid var(--primary-color);
-            border-radius: 12px;
-            padding: 30px 30px 20px;
-            margin-top: 30px;
             box-shadow: var(--shadow-light);
-            color: var(--primary-dark);
-            font-weight: 600;
+            animation: fadeIn 0.5s ease-out;
         }
 
-        .prediction-result h3,
-        .recommendations-section h3,
-        .plot-container h3 {
-            margin-top: 0;
-            margin-bottom: 18px;
-            font-size: 1.5rem;
+        /* Common styles for result sections */
+        .prediction-result, .recommendations-section, .plot-container, .risk-segment, .disclaimer, .collapsible-section {
+            opacity: 0; /* Hidden initially for entrance animation */
+            transform: translateY(20px);
+            animation: fadeInSlideUp 0.8s forwards ease-out;
+            animation-delay: 0.3s; /* Delay for successive sections */
+            margin-top: 35px; /* Consistent top margin */
+            padding: 30px; /* Consistent padding */
+            border-radius: 14px; /* Consistent border radius */
+            box-shadow: var(--shadow-light); /* Consistent shadow */
+        }
+
+        .prediction-result {
+            background: linear-gradient(135deg, #e6f4ea, #dff0d8); /* Subtle gradient */
+            border: 1.5px solid var(--primary-color);
             color: var(--primary-dark);
+        }
+
+        .prediction-result h3 {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
         }
 
         .prediction-result p {
-            font-size: 1.3rem;
-            line-height: 1.4;
-            text-align: center;
-            margin: 0;
+            font-size: 1.4rem;
+            line-height: 1.5;
+        }
+
+        .prediction-result p strong span {
+            font-size: 1.8rem; /* Larger predicted value */
+            font-weight: 800;
+        }
+
+        .recommendations-section {
+            background: linear-gradient(135deg, #fdf8e6, #fffbe0); /* Light yellow gradient */
+            border: 1.5px solid var(--accent-color);
+            color: var(--text-color);
+        }
+
+        .recommendations-section h3 {
+            color: var(--accent-color);
+            font-size: 1.6rem;
         }
 
         .recommendations-section ul {
@@ -201,51 +319,110 @@
         }
 
         .recommendation-item {
-            background-color: #dff0d8;
-            border-left: 6px solid var(--primary-color);
-            padding: 18px 22px;
-            margin-bottom: 20px;
+            background-color: #fff; /* White background for items */
+            border-left: 6px solid var(--accent-color); /* Matching accent color */
+            padding: 20px; /* More padding */
+            margin-bottom: 15px; /* Consistent margin */
             border-radius: 10px;
-            box-shadow: 0 1px 4px rgba(40, 167, 69, 0.3);
-            transition: transform 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Item specific shadow */
+            transition: all 0.3s ease;
+        }
+
+        .recommendation-item:last-child {
+            margin-bottom: 0;
         }
 
         .recommendation-item:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-medium);
+            transform: translateY(-5px); /* More pronounced lift on hover */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
         }
 
         .recommendation-item strong {
-            font-weight: 700;
-            display: block;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
+            color: var(--text-color); /* Ensure dark text */
         }
 
         .recommendation-item span {
-            font-weight: 500;
-            font-size: 0.95rem;
-            color: var(--primary-dark);
-            margin-top: 6px;
-            display: block;
+            font-size: 0.98rem;
+            color: var(--light-text-color);
+            margin-top: 8px;
+        }
+
+        .plot-container {
+            background: linear-gradient(135deg, #e0f7fa, #cbeff5); /* Light blue gradient */
+            border: 1.5px solid var(--secondary-color);
+            color: var(--text-color);
+        }
+
+        .plot-container h3 {
+            color: var(--secondary-color);
+            font-size: 1.6rem;
         }
 
         .plot-container img {
-            max-width: 100%;
-            border-radius: 10px;
+            max-width: 100%; /* Ensure image is responsive */
+            height: auto;
+            display: block; /* Remove extra space below image */
+            margin: 20px auto 0; /* Center image and add top margin */
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-light);
-            margin-bottom: 10px;
         }
 
-        .plot-container p {
-            font-size: 0.9rem;
+        .collapsible-section {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            color: var(--text-color);
+            margin-top: 35px; /* Consistent margin */
+        }
+
+        .collapsible-section summary {
+            padding: 18px 25px; /* More padding */
+            font-weight: 700;
+            font-size: 1.2rem; /* Slightly larger */
+            background-color: #f8f8f8; /* Very light gray */
+            border-bottom: 1px solid var(--border-color); /* Subtle separator */
             color: var(--primary-dark);
-            margin-top: 0;
-            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .collapsible-section summary:hover {
+            background-color: #f0f0f0;
+        }
+
+        .collapsible-section summary i {
+            font-size: 1.1rem; /* Icon size */
+            color: var(--primary-color);
+            transition: transform 0.3s ease; /* Animation for icon rotation */
+        }
+
+        .collapsible-section[open] summary i {
+            transform: rotate(90deg); /* Rotate icon when open */
+        }
+
+        .collapsible-content {
+            padding: 25px; /* More padding */
+            padding-top: 15px; /* Less top padding after summary */
+        }
+        .collapsible-content ul {
+            padding-left: 0;
+            list-style: none;
+        }
+        .collapsible-content ul li {
+            margin-bottom: 10px;
+            font-size: 0.98rem;
+            color: var(--light-text-color);
+        }
+        .collapsible-content ul li strong {
+            color: var(--text-color);
         }
 
         .risk-segment {
-            margin-top: 40px;
+            margin-top: 35px; /* Consistent margin */
             background: #fff;
             border-radius: 14px;
             box-shadow: var(--shadow-medium);
@@ -255,6 +432,7 @@
             margin-left: auto;
             margin-right: auto;
             border: 3px solid;
+            animation-delay: 0.4s; /* Stagger animation */
         }
 
         .risk-segment h2 {
@@ -305,126 +483,69 @@
             color: var(--danger-color);
         }
 
-        /* Styles for Tooltip */
-        .tooltip-icon {
-            cursor: help;
-            font-style: normal;
-            font-weight: 600;
-            color: var(--secondary-color);
-            margin-left: 5px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .tooltip-icon .tooltiptext {
-            visibility: hidden;
-            width: 250px; /* Adjust width as needed */
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 8px;
-            padding: 10px;
-            position: absolute;
-            z-index: 10;
-            bottom: 125%; /* Position above the icon */
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s, visibility 0.3s;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            box-shadow: var(--shadow-medium);
-        }
-
-        .tooltip-icon .tooltiptext::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #333 transparent transparent transparent;
-        }
-
-        .tooltip-icon:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-        /* End NEW Tooltip Styles */
-
-        /* NEW: Styles for Collapsible Sections */
-        .collapsible-section {
-            border: 1px solid var(--border-color);
+        /* Disclaimer Section */
+        .disclaimer {
+            margin-top: 50px;
+            padding: 25px;
+            background-color: #f0f0f0;
             border-radius: 10px;
-            overflow: hidden;
-            box-shadow: var(--shadow-light);
-            background-color: var(--card-bg);
-            margin-top: 20px; /* Gap between collapsible sections */
+            border: 1px solid #ddd;
+            color: #555;
+            font-size: 0.9rem;
+            text-align: center;
+            animation-delay: 0.5s; /* Stagger animation */
         }
 
-        .collapsible-section summary {
-            padding: 15px 20px;
-            font-weight: 700;
-            font-size: 1.15rem;
-            background-color: #f2f7f3; /* Light background for summary */
-            color: var(--primary-dark);
-            cursor: pointer;
-            outline: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s ease;
+        /* About the Model Footer */
+        .container > p:last-of-type {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 30px;
+            padding-bottom: 20px;
         }
 
-        .collapsible-section summary:hover {
-            background-color: #eaf2eb;
-        }
-
-        .collapsible-section summary::-webkit-details-marker {
-            display: none; /* Hide default marker */
-        }
-
-        .collapsible-section summary i {
-            margin-left: 10px;
-            transition: transform 0.3s ease;
-        }
-
-        .collapsible-section[open] summary i {
-            transform: rotate(90deg);
-        }
-
-        .collapsible-content {
-            padding: 20px;
-            padding-top: 10px;
-        }
-        /* End NEW Collapsible Styles */
-
-        @media (max-width: 650px) {
-            .container {
-                padding: 30px 20px;
-            }
-
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
             form {
                 grid-template-columns: 1fr;
-                gap: 20px 0;
+                gap: 25px 0; /* Adjust gap for single column */
+                padding: 30px 20px; /* Adjust padding for smaller screens */
             }
-
             .button-group {
                 flex-direction: column;
             }
-
             input[type="submit"], button[type="reset"] {
                 width: 100%;
             }
-
-            .risk-segment {
-                padding: 25px 20px;
-                max-width: 100%;
+            .tooltiptext {
+                left: 0;
+                transform: translateX(0);
+                width: 100%; /* Full width for smaller screens */
+                bottom: 100%; /* Adjust position for smaller screens */
             }
+            .tooltiptext::after {
+                left: 15%; /* Adjust arrow position for smaller screens */
+                margin-left: 0;
+            }
+        }
 
-            .risk-segment ul {
-                padding-left: 1rem;
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 15px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            p.subtitle {
+                font-size: 1rem;
+            }
+            input[type="number"], select {
+                padding: 12px 15px;
+            }
+            input[type="submit"], button[type="reset"] {
+                font-size: 1.1rem;
+                padding: 14px 0;
             }
         }
     </style>
@@ -452,7 +573,7 @@
                     max="100"
                     required
                     placeholder="Contoh: 35"
-                    value="{{ form_data.get('Age', '') }}"
+                    value=""
                 />
             </div>
 
@@ -465,8 +586,8 @@
                 </label>
                 <select id="diabetes" name="Diabetes" required>
                     <option value="" disabled selected>Pilih status</option>
-                    <option value="0" {% if form_data.get('Diabetes') == 0 %}selected{% endif %}>Tidak</option>
-                    <option value="1" {% if form_data.get('Diabetes') == 1 %}selected{% endif %}>Ya</option>
+                    <option value="0">Tidak</option>
+                    <option value="1">Ya</option>
                 </select>
             </div>
 
@@ -485,7 +606,7 @@
                     max="250"
                     required
                     placeholder="Contoh: 165"
-                    value="{{ form_data.get('Height', '') }}"
+                    value=""
                 />
             </div>
 
@@ -498,8 +619,8 @@
                 </label>
                 <select id="bloodpressureproblems" name="BloodPressureProblems" required>
                     <option value="" disabled selected>Pilih status</option>
-                    <option value="0" {% if form_data.get('BloodPressureProblems') == 0 %}selected{% endif %}>Tidak</option>
-                    <option value="1" {% if form_data.get('BloodPressureProblems') == 1 %}selected{% endif %}>Ya</option>
+                    <option value="0">Tidak</option>
+                    <option value="1">Ya</option>
                 </select>
             </div>
                         
@@ -518,7 +639,7 @@
                     max="300"
                     required
                     placeholder="Contoh: 65"
-                    value="{{ form_data.get('Weight', '') }}"
+                    value=""
                 />
             </div>
 
@@ -531,8 +652,8 @@
                 </label>
                 <select id="historyofcancerinfamily" name="HistoryOfCancerInFamily" required>
                     <option value="" disabled selected>Pilih status</option>
-                    <option value="0" {% if form_data.get('HistoryOfCancerInFamily') == 0 %}selected{% endif %}>Tidak</option>
-                    <option value="1" {% if form_data.get('HistoryOfCancerInFamily') == 1 %}selected{% endif %}>Ya</option>
+                    <option value="0">Tidak</option>
+                    <option value="1">Ya</option>
                 </select>
             </div>
 
@@ -545,8 +666,8 @@
                 </label>
                 <select id="knownallergies" name="KnownAllergies" required>
                     <option value="" disabled selected>Pilih status</option>
-                    <option value="0" {% if form_data.get('KnownAllergies') == 0 %}selected{% endif %}>Tidak</option>
-                    <option value="1" {% if form_data.get('KnownAllergies') == 1 %}selected{% endif %}>Ya</option>
+                    <option value="0">Tidak</option>
+                    <option value="1">Ya</option>
                 </select>
             </div>
 
@@ -559,8 +680,8 @@
                 </label>
                 <select id="anytransplants" name="AnyTransplants" required>
                     <option value="" disabled selected>Pilih status</option>
-                    <option value="0" {% if form_data.get('AnyTransplants') == 0 %}selected{% endif %}>Tidak</option>
-                    <option value="1" {% if form_data.get('AnyTransplants') == 1 %}selected{% endif %}>Ya</option>
+                    <option value="0">Tidak</option>
+                    <option value="1">Ya</option>
                 </select>
             </div>
 
@@ -573,8 +694,8 @@
                 </label>
                 <select id="anychronicdiseases" name="AnyChronicDiseases" required>
                     <option value="" disabled selected>Pilih status</option>
-                    <option value="0" {% if form_data.get('AnyChronicDiseases') == 0 %}selected{% endif %}>Tidak</option>
-                    <option value="1" {% if form_data.get('AnyChronicDiseases') == 1 %}selected{% endif %}>Ya</option>
+                    <option value="0">Tidak</option>
+                    <option value="1">Ya</option>
                 </select>
             </div>
 
@@ -593,7 +714,7 @@
                     max="3"
                     required
                     placeholder="Contoh: 1"
-                    value="{{ form_data.get('NumberOfMajorSurgeries', '') }}"
+                    value=""
                 />
             </div>
 
@@ -638,14 +759,13 @@
             {% endif %}
         {% endif %}
 
-        <!-- Collapsible Section: Pahami Profil Kesehatan Anda Lebih Dalam -->
         {% if user_health_insights %}
         <details class="collapsible-section">
             <summary>Pahami Profil Kesehatan Anda Lebih Dalam <i class="fas fa-chevron-right"></i></summary>
             <div class="collapsible-content">
                 <ul>
                     {% for insight in user_health_insights %}
-                    <li style="margin-bottom: 12px; font-size: 0.98rem;"><i class="fas fa-check-circle" style="color: var(--secondary-color); margin-right: 8px;"></i>{{ insight | safe }}</li>
+                    <li style="margin-bottom: 12px; font-size: 0.95rem;"><i class="fas fa-check-circle" style="color: var(--secondary-color); margin-right: 8px;"></i>{{ insight | safe }}</li>
                     {% endfor %}
                 </ul>
                 <p style="font-size: 0.85rem; color: var(--light-text-color); margin-top: 20px;">
@@ -655,7 +775,6 @@
         </details>
         {% endif %}
 
-        <!-- Long-Term Projection Section (kept open by default) -->
         {% if long_term_projection %}
             <div class="prediction-result" style="background: #e6f4f8; border-color: #3f51b5; color: #283593; margin-top: 20px;">
                 <h3>Proyeksi Premi Asuransi Jangka Panjang (5 Tahun):</h3>
@@ -683,7 +802,6 @@
         </div>
         {% endif %}
 
-        <!-- Disclaimer / Important Information Section -->
         <div class="disclaimer" style="margin-top: 50px; padding: 25px; background-color: #f0f0f0; border-radius: 10px; border: 1px solid #ddd; color: #555; font-size: 0.9rem; text-align: center;">
             <h3>Penting untuk Diketahui:</h3>
             <p>Estimasi premi asuransi ini dihasilkan oleh model Machine Learning berdasarkan data historis dan informasi yang Anda berikan. Ini adalah perkiraan dan bukan penawaran premi yang mengikat.</p>
@@ -691,11 +809,17 @@
             <p>Selalu konsultasikan dengan agen asuransi berlisensi dan profesional kesehatan untuk saran medis atau finansial yang dipersonalisasi.</p>
         </div>
 
-        <!-- About the Model Footer -->
         <p style="text-align: center; font-size: 0.85rem; color: #888; margin-top: 30px; padding-bottom: 20px;">
             Diberdayakan oleh Model Machine Learning untuk Prediksi Premi Asuransi Kesehatan.
         </p>
 
     </div>
+
+    <script>
+        // Helper function for currency formatting (still useful if you add any JS for other elements)
+        function format_currency(amount) {
+            return new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
+        }
+    </script>
 </body>
 </html>
