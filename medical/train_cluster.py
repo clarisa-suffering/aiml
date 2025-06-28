@@ -37,3 +37,10 @@ print(data.groupby('cluster')[features].mean())
 # Tampilkan jumlah data per cluster
 print("\nJumlah data per cluster:")
 print(data['cluster'].value_counts())
+
+# Hitung rata-rata fitur per cluster
+cluster_summary = data.groupby('cluster').mean()
+
+print(cluster_summary)
+# Simpan ringkasan cluster ke file CSV
+cluster_summary.to_csv('cluster_summary.csv')

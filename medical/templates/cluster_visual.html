@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Visualisasi Clustering</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-color: #28a745;     /* hijau cerah */
+      --primary-dark: #1e7e34;      /* hijau gelap */
+      --secondary-color: #28a745;   /* ganti biru ke hijau agar konsisten */
+      --accent-color: #ffc107;
+      --bg-color: #f8fafc;
+      --text-color: #2d3436;
+      --light-text-color: #636e72;
+      --border-color: #d1d8e0;
+      --card-bg: #fff;
+      --shadow-light: 0 2px 6px rgba(0, 0, 0, 0.1);
+      --shadow-medium: 0 6px 15px rgba(0, 0, 0, 0.15);
+      --danger-color: #e74c3c;
+    }
+
+    .navbar {
+      width: 100%;
+      background-color: #ffffff;
+      padding: 15px 30px;
+      box-shadow: var(--shadow-medium);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 999;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+
+    .nav-brand {
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--primary-dark);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-item {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+
+    .nav-item:hover {
+      color: var(--primary-color);
+      transform: translateY(-2px);
+      transition: color 0.3s, transform 0.2s ease;
+    }
+
+    .nav-item.active {
+      color: var(--primary-color);
+      border-bottom: 3px solid var(--primary-color);
+      padding-bottom: 4px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* Header tabel disesuaikan ke hijau muda */
+    thead {
+      background-color: #d4edda;  /* hijau muda soft */
+      color: #155724;              /* hijau gelap */
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800" style="font-family: 'Poppins', sans-serif;">
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">Asuransi Sehat</a>
+      <ul class="nav-links">
+        <li><a href="/" class="nav-item {% if request.path == '/' %}active{% endif %}">Prediksi Premi</a></li>
+        <li><a href="/cluster-visual" class="nav-item {% if '/cluster' in request.path %}active{% endif %}">Visualisasi Cluster</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="max-w-6xl mx-auto p-6 mt-12">
+    <h1 class="text-3xl font-bold text-center mb-8" style="color: var(--primary-dark);">
+      Visualisasi Clustering KMeans
+    </h1>
+
+    <!-- Cluster Plot -->
+    <div class="flex justify-center mb-8">
+      <img class="rounded shadow-lg border" src="data:image/png;base64,{{ plot_url }}" alt="Cluster Plot" />
+    </div>
+
+    <!-- Jumlah Data per Cluster -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-semibold mb-4" style="color: var(--primary-color);">
+        Jumlah Data per Cluster
+      </h2>
+      <ul class="list-disc pl-6 space-y-1 text-gray-700">
+        {% for cluster, count in cluster_counts.items() %}
+        <li><strong>Cluster {{ cluster }}</strong>: {{ count }} data</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Rata-rata Fitur per Cluster -->
+    <div>
+      <h2 class="text-2xl font-semibold mb-4" style="color: var(--primary-color);">
+        Rata-rata Fitur per Cluster
+      </h2>
+      <div class="overflow-x-auto bg-white rounded shadow">
+        <table class="min-w-full text-sm text-left border border-gray-300">
+          <thead>
+            <tr>
+              <th class="px-4 py-2 border-b">Cluster</th>
+              {% for col in cluster_means.columns %}
+              <th class="px-4 py-2 border-b whitespace-nowrap">{{ col }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for idx, row in cluster_means.iterrows() %}
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-2 border-b font-medium">{{ idx }}</td>
+              {% for col in cluster_means.columns %}
+              <td class="px-4 py-2 border-b">{{ "%.2f"|format(row[col]) }}</td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

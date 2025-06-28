@@ -8,7 +8,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import base64 # encode gambar menjadi string
 from io import BytesIO #menyimpan gambar ke memori
-
+import pandas as pd
+from sklearn.decomposition import PCA
 
 app = Flask(__name__)
 
@@ -336,15 +337,9 @@ def predict():
         input_features_list = [input_form_data[name] for name in feature_names]
 
         # Scaling fitur untuk clustering
-        user_input_scaled = scaler_kmeans.transform([input_features_list])
+        user_input_scaled = scaler_kmeans.transform(pd.DataFrame([input_features_list], columns=feature_names))
         cluster = kmeans_model.predict(user_input_scaled)[0]
 
-        # Mapping cluster ke segmen
-        # cluster_labels = {
-        #     0: 'Basic Plan (Risiko Rendah)',
-        #     1: 'Moderate Plan (Risiko Sedang)',
-        #     2: 'Premium Plan (Risiko Tinggi)'
-        # }
         cluster_labels = {
             0: 'Premium Plan (Risiko Tinggi)',
             1: 'Moderate Plan (Risiko Sedang)',
@@ -395,8 +390,53 @@ def predict():
         return render_template('form.html', error=f"Terjadi kesalahan saat memproses: {str(e)}. Mohon coba lagi nanti.", form_data=request.form)
     
 
+# CLUSTER VISUALIZATION ROUTE
+kmeans_model = joblib.load('kmeans_model.pkl')
+scaler = joblib.load('scaler_kmeans.pkl')
+data = pd.read_csv('medical/data/Medicalpremium.csv')  
 
+@app.route('/cluster-visual')
+def cluster_visual():
+    # Ambil fitur untuk clustering
+    features = [
+        'Age', 'Diabetes', 'BloodPressureProblems', 'AnyTransplants',
+        'AnyChronicDiseases', 'Height', 'Weight', 'KnownAllergies',
+        'HistoryOfCancerInFamily', 'NumberOfMajorSurgeries'
+    ]
+    X = data[features]
+    X_scaled = scaler.transform(X)
 
+    # Prediksi cluster
+    clusters = kmeans_model.predict(X_scaled)
+
+    # PCA untuk 2D visualisasi
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(X_scaled)
+
+    # Plot scatter dengan warna cluster
+    plt.figure(figsize=(8,6))
+    scatter = plt.scatter(X_pca[:,0], X_pca[:,1], c=clusters, cmap='Set1', alpha=0.6)
+    plt.title('Visualisasi Clustering KMeans (2D PCA)')
+    plt.xlabel('PCA Component 1')
+    plt.ylabel('PCA Component 2')
+    plt.colorbar(scatter, label='Cluster')
+    plt.tight_layout()
+
+    img = BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    plot_url = base64.b64encode(img.getvalue()).decode()
+    plt.close()
+
+    # Statistik cluster
+    cluster_counts = pd.Series(clusters).value_counts().sort_index()
+    cluster_means = data.groupby(clusters)[features].mean()
+
+    return render_template('cluster_visual.html',
+                           plot_url=plot_url,
+                           cluster_counts=cluster_counts,
+                           cluster_means=cluster_means)
+    
 if __name__ == '__main__':
     # Adjust debug mode based on environment
     app.run(debug=True) # Set to False in production
