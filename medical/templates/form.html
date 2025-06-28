@@ -268,6 +268,19 @@
             animation: fadeIn 0.5s ease-out;
         }
 
+        /* Styles for validation error messages */
+        .input-error-message {
+            color: var(--danger-color);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none; /* Hidden by default */
+        }
+
+        input.invalid, select.invalid {
+            border-color: var(--danger-color);
+            box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.25);
+        }
+
         /* Common styles for result sections */
         .prediction-result, .recommendations-section, .plot-container, .risk-segment, .disclaimer, .collapsible-section {
             opacity: 0; /* Hidden initially for entrance animation */
@@ -557,7 +570,7 @@
             Masukkan informasi kesehatan Anda untuk mendapatkan estimasi premi asuransi dan rekomendasi penghematan.
         </p>
 
-        <form method="post" action="/predict" novalidate>
+        <form method="post" action="/predict" novalidate id="insuranceForm">
             <div class="form-group">
                 <label for="age">Usia (Tahun):
                     <span class="tooltip-icon">
@@ -570,11 +583,12 @@
                     id="age"
                     name="Age"
                     min="18"
-                    max="100"
+                    max="122"
                     required
                     placeholder="Contoh: 35"
                     value=""
                 />
+                <span class="input-error-message" id="age-error"></span>
             </div>
 
             <div class="form-group">
@@ -589,6 +603,7 @@
                     <option value="0">Tidak</option>
                     <option value="1">Ya</option>
                 </select>
+                <span class="input-error-message" id="diabetes-error"></span>
             </div>
 
             <div class="form-group">
@@ -603,11 +618,12 @@
                     id="height"
                     name="Height"
                     min="50"
-                    max="250"
+                    max="272"
                     required
                     placeholder="Contoh: 165"
                     value=""
                 />
+                <span class="input-error-message" id="height-error"></span>
             </div>
 
             <div class="form-group">
@@ -622,6 +638,7 @@
                     <option value="0">Tidak</option>
                     <option value="1">Ya</option>
                 </select>
+                <span class="input-error-message" id="bloodpressureproblems-error"></span>
             </div>
                         
             <div class="form-group">
@@ -641,6 +658,7 @@
                     placeholder="Contoh: 65"
                     value=""
                 />
+                <span class="input-error-message" id="weight-error"></span>
             </div>
 
             <div class="form-group">
@@ -655,6 +673,7 @@
                     <option value="0">Tidak</option>
                     <option value="1">Ya</option>
                 </select>
+                <span class="input-error-message" id="historyofcancerinfamily-error"></span>
             </div>
 
             <div class="form-group">
@@ -669,6 +688,7 @@
                     <option value="0">Tidak</option>
                     <option value="1">Ya</option>
                 </select>
+                <span class="input-error-message" id="knownallergies-error"></span>
             </div>
 
             <div class="form-group">
@@ -683,6 +703,7 @@
                     <option value="0">Tidak</option>
                     <option value="1">Ya</option>
                 </select>
+                <span class="input-error-message" id="anytransplants-error"></span>
             </div>
 
             <div class="form-group">
@@ -697,6 +718,7 @@
                     <option value="0">Tidak</option>
                     <option value="1">Ya</option>
                 </select>
+                <span class="input-error-message" id="anychronicdiseases-error"></span>
             </div>
 
             <div class="form-group">
@@ -716,6 +738,7 @@
                     placeholder="Contoh: 1"
                     value=""
                 />
+                <span class="input-error-message" id="numberofmajorsurgeries-error"></span>
             </div>
 
             <div class="button-group">
@@ -816,7 +839,198 @@
     </div>
 
     <script>
-        // Helper function for currency formatting (still useful if you add any JS for other elements)
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('insuranceForm');
+            const inputs = form.querySelectorAll('input, select');
+
+            // Function to display an error message
+            function displayError(inputElement, message) {
+                const errorSpan = document.getElementById(`${inputElement.id}-error`);
+                if (errorSpan) {
+                    errorSpan.textContent = message;
+                    errorSpan.style.display = 'block';
+                    inputElement.classList.add('invalid');
+                }
+            }
+
+            // Function to clear an error message
+            function clearError(inputElement) {
+                const errorSpan = document.getElementById(`${inputElement.id}-error`);
+                if (errorSpan) {
+                    errorSpan.textContent = '';
+                    errorSpan.style.display = 'none';
+                    inputElement.classList.remove('invalid');
+                }
+            }
+
+            // Validation function for individual inputs
+            function validateInput(input) {
+                clearError(input); // Clear previous error
+
+                if (input.hasAttribute('required') && input.value.trim() === '') {
+                    displayError(input, 'Kolom ini wajib diisi.');
+                    return false;
+                }
+
+                // Specific validations for age and height
+                if (input.id === 'age') {
+                    const age = parseInt(input.value);
+                    if (isNaN(age) || age < 18 || age > 122) {
+                        displayError(input, 'Usia harus antara 18 dan 122 tahun.');
+                        return false;
+                    }
+                }
+
+                if (input.id === 'height') {
+                    const height = parseInt(input.value);
+                    if (isNaN(height) || height < 50 || height > 272) {
+                        displayError(input, 'Tinggi badan harus antara 50 dan 272 cm.');
+                        return false;
+                    }
+                }
+
+                // Add more specific validations as needed
+                if (input.id === 'weight') {
+                    const weight = parseInt(input.value);
+                    if (isNaN(weight) || weight < 10 || weight > 300) {
+                        displayError(input, 'Berat badan harus antara 10 dan 300 kg.');
+                        return false;
+                    }
+                }
+
+                if (input.id === 'numberofmajorsurgeries') {
+                    const surgeries = parseInt(input.value);
+                    if (isNaN(surgeries) || surgeries < 0 || surgeries > 3) {
+                        displayError(input, 'Jumlah operasi besar harus antara 0 dan 3.');
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            // Add blur event listeners for real-time validation feedback
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    validateInput(this);
+                });
+                // Also listen for change event on selects
+                if (input.tagName === 'SELECT') {
+                    input.addEventListener('change', function() {
+                        validateInput(this);
+                    });
+                }
+            });
+
+            form.addEventListener('submit', function(event) {
+                // Prevent default form submission to handle it with JavaScript
+                event.preventDefault();
+
+                let formIsValid = true;
+                // Validate all inputs before submission
+                inputs.forEach(input => {
+                    if (!validateInput(input)) {
+                        formIsValid = false;
+                    }
+                });
+
+                if (formIsValid) {
+                    // If the form is valid, you can now send the data to your backend
+                    // using fetch API or XMLHttpRequest.
+                    // For now, we'll simulate a successful submission and preserve input values.
+
+                    const formData = new FormData(form);
+                    const data = {};
+                    for (let [key, value] of formData.entries()) {
+                        data[key] = value;
+                    }
+
+                    // Simulate server response and display logic (replace with actual fetch)
+                    console.log('Form data submitted:', data);
+
+                    // --- IMPORTANT: This part assumes your Flask/backend renders the
+                    // --- entire HTML page again with `prediction` and `error` data.
+                    // --- If you want to use AJAX to update only parts of the page,
+                    // --- you'd replace the `form.submit()` with a `fetch` request.
+
+                    // If you're submitting the form normally (e.g., to Flask, which then renders
+                    // the page again with results), you need to re-populate the values
+                    // server-side or use a client-side storage mechanism (like localStorage)
+                    // and re-hydrate on page load.
+                    // The simplest way with your current Flask setup is to ensure Flask
+                    // passes back the submitted values to the template.
+
+                    // For demonstration, let's just re-submit the form programmatically
+                    // after ensuring validation passed. This will cause a page reload
+                    // but with the values preserved if your backend handles it.
+                    // To prevent immediate clearing, we first store values in localStorage.
+                    storeFormValues();
+                    form.submit(); // This will trigger the normal form submission
+
+                } else {
+                    // If the form is not valid, display a general error message if needed
+                    // (the individual input error messages are already shown)
+                    const errorMessageDiv = document.querySelector('.error-message');
+                    if (errorMessageDiv) {
+                        errorMessageDiv.innerHTML = '<p>Mohon perbaiki kesalahan pada formulir.</p>';
+                        errorMessageDiv.style.display = 'block';
+                    }
+                }
+            });
+
+            // Store form values in localStorage before submission/unload
+            function storeFormValues() {
+                const values = {};
+                inputs.forEach(input => {
+                    if (input.type === 'checkbox' || input.type === 'radio') {
+                        values[input.name] = input.checked;
+                    } else {
+                        values[input.name] = input.value;
+                    }
+                });
+                localStorage.setItem('insuranceFormValues', JSON.stringify(values));
+            }
+
+            // Restore form values from localStorage on page load
+            function restoreFormValues() {
+                const storedValues = localStorage.getItem('insuranceFormValues');
+                if (storedValues) {
+                    const values = JSON.parse(storedValues);
+                    inputs.forEach(input => {
+                        if (values[input.name] !== undefined) {
+                            if (input.type === 'checkbox' || input.type === 'radio') {
+                                input.checked = values[input.name];
+                            } else {
+                                input.value = values[input.name];
+                            }
+                        }
+                    });
+                    localStorage.removeItem('insuranceFormValues'); // Clear after restoring
+                }
+            }
+
+            // Call restoreFormValues on page load to re-populate the form
+            restoreFormValues();
+
+            // Clear form on reset button click
+            form.querySelector('button[type="reset"]').addEventListener('click', function() {
+                inputs.forEach(input => {
+                    clearError(input);
+                    if (input.tagName === 'SELECT') {
+                        input.value = ""; // Set select to default empty option
+                    } else {
+                        input.value = ""; // Clear text/number inputs
+                    }
+                });
+                const errorMessageDiv = document.querySelector('.error-message');
+                if (errorMessageDiv) {
+                    errorMessageDiv.style.display = 'none';
+                }
+                localStorage.removeItem('insuranceFormValues'); // Clear stored values on reset
+            });
+        });
+
+        // Helper function for currency formatting (if used elsewhere)
         function format_currency(amount) {
             return new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
         }
