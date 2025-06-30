@@ -611,24 +611,23 @@
 
         .risk-segment {
             margin-top: 35px;
-            /* Consistent margin */
             background: #fff;
             border-radius: 14px;
             box-shadow: var(--shadow-medium);
             padding: 30px 35px;
             text-align: center;
-            max-width: 600px;
             margin-left: auto;
             margin-right: auto;
             border: 3px solid;
             animation-delay: 0.4s;
-            /* Stagger animation */
+            color: #444;
         }
 
         .risk-segment h2 {
             margin: 0 0 15px;
             font-weight: 800;
             font-size: 1.9rem;
+            color: #444;
         }
 
         .risk-segment p.desc {
@@ -650,6 +649,7 @@
             margin-bottom: 12px;
             font-weight: 600;
             font-size: 1rem;
+            color: #444;
         }
 
         .risk-segment ul li strong {
@@ -1026,11 +1026,11 @@
         else 'risk-premium' %}
         <div class="risk-segment {{ class_name }}" role="region" aria-live="polite" aria-atomic="true">
             <h2>Segmentasi Risiko Anda</h2>
-            <p class="desc"><strong>{{ risk_segment }}</strong></p>
+            <p class="desc" style="color: inherit; font-size: 1.5rem;"><strong>{{ risk_segment }}</strong></p>
             <p style="color: #444;">Kategori ini menunjukkan profil risiko Anda berdasarkan data yang dimasukkan.
                 Gunakan informasi ini untuk memilih paket asuransi yang sesuai.</p>
             <hr />
-            <h3>Penjelasan Kategori:</h3>
+            <h3 style="color: #444;">Penjelasan Kategori:</h3>
             <ul>
                 <li><strong style="color: var(--primary-color)">Basic Plan (Risiko Rendah):</strong> Pengguna sehat
                     tanpa riwayat penyakit. Premi rendah dengan proteksi dasar.</li>
