@@ -764,9 +764,9 @@
             <a href="/" class="nav-brand">Asuransi Sehat</a>
             <ul class="nav-links">
                 <li><a href="/" class="nav-item {% if request.path == '/' %}active{% endif %}">Prediksi Premi</a></li>
-                <li><a href="/cluster-visual"
+                <!-- <li><a href="/cluster-visual"
                     class="nav-item {% if '/cluster' in request.path %}active{% endif %}">Visualisasi Cluster</a>
-                </li>
+                </li> -->
             </ul>
         </div>
     </nav>
@@ -1025,7 +1025,7 @@
         {% set class_name = 'risk-basic' if 'Basic' in risk_segment else 'risk-moderate' if 'Moderate' in risk_segment
         else 'risk-premium' %}
         <div class="risk-segment {{ class_name }}" role="region" aria-live="polite" aria-atomic="true">
-            <h2>Segmentasi Risiko Anda</h2>
+            <h2>Paket Asuransi</h2>
             <p class="desc" style="color: inherit; font-size: 1.5rem;"><strong>{{ risk_segment }}</strong></p>
             <p style="color: #444;">Kategori ini menunjukkan profil risiko Anda berdasarkan data yang dimasukkan.
                 Gunakan informasi ini untuk memilih paket asuransi yang sesuai.</p>
