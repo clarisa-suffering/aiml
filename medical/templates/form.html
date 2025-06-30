@@ -1082,8 +1082,8 @@
                 // Specific validations for age, height, weight, and surgeries
                 if (input.id === 'age') {
                     const age = parseInt(input.value);
-                    if (isNaN(age) || age < 18 || age > 122) {
-                        displayError(input, 'Usia harus antara 18 dan 122 tahun.');
+                    if (isNaN(age) || age > 122) {
+                        displayError(input, 'Usia harus kurang dari 122 tahun.');
                         return false;
                     }
                 }
