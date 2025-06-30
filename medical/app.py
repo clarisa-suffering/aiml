@@ -211,24 +211,26 @@ def create_feature_contribution_plot(user_input_list, model, feature_names, aver
 def simulate_savings(user_input_list, model, predicted_price):
     recommendations = []
     
-    temp_controllable_features_map = {
+    # Untuk kriteria yg bisa dikontrol
+    controllable_features_map = {
         # 'Diabetes': 'Diabetes',
         # 'BloodPressureProblems': 'Tekanan Darah Tinggi',
         # 'AnyChronicDiseases': 'Penyakit Kronis',
+        'Weight': 'Berat Badan', 
         # 'KnownAllergies': 'Alergi',
-        # 'NumberOfMajorSurgeries': 'Operasi Besar'
     } 
     
     for i, feature in enumerate(feature_names):
-        if feature in temp_controllable_features_map and user_input_list[i] == 1:
+        if feature in controllable_features_map and user_input_list[i] == 1:
             simulated_input = user_input_list.copy()
             simulated_input[i] = 0 #ganti 1 menjadi 0 untuk simulasi
             
             simulated_price = model.predict(np.array([simulated_input]))[0]
             saving = predicted_price - simulated_price
             
+            # Jika hasil saving positif (harga simulasi lebih murah daripada harga asli), berarti ada potensi penghematan
             if saving > 0:
-                readable_name = temp_controllable_features_map[feature]
+                readable_name = controllable_features_map[feature]
                 recommendations.append({
                     'type': feature,
                     'title': f"Kurangi Risiko: {readable_name}",
@@ -239,10 +241,11 @@ def simulate_savings(user_input_list, model, predicted_price):
                     'potential_saving': saving
                 })
 
-    #simulasi BMI berdasarkan height dan weight
+    # Simulasi BMI berdasarkan height dan weight
+    # Cari index dari weight dan height dalam daftar feature_names
     idx_weight = feature_names.index("Weight")
     idx_height = feature_names.index("Height")
-    
+    # Ambil input user berdasarkan index yg sdh ditemukan
     weight = user_input_list[idx_weight]
     height_cm = user_input_list[idx_height]
 
@@ -251,7 +254,7 @@ def simulate_savings(user_input_list, model, predicted_price):
     bmi = weight / (height_m ** 2) if height_m != 0 else 0
     
     if bmi > 24.9: #overweight
-        target_weight = 22.0 * (height_m ** 2) #target BMI sehat (tengah-tengah dari rentang 18,5 - 25)
+        target_weight = 22.0 * (height_m ** 2) #target BMI sehat (asumsi ambil nilai median dari rentang 18,5 - 25)
         simulated_input = user_input_list.copy()
         simulated_input[idx_weight] = round(target_weight)
         
@@ -269,8 +272,9 @@ def simulate_savings(user_input_list, model, predicted_price):
                 ),
                 'potential_saving': saving
             })
+
     elif bmi < 18.5 and bmi > 0: #underweight
-        target_weight = 18.5 * (height_m ** 2)
+        target_weight = 22.0 * (height_m ** 2)  #target BMI sehat (asumsi ambil nilai median dari rentang 18,5 - 25)
         simulated_input = user_input_list.copy()
         simulated_input[idx_weight] = round(target_weight)
         

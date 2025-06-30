@@ -945,7 +945,11 @@
 
         <div class="recommendations-section {% if not recommendations %}hidden-element{% endif %}">
             
-            <h3> <span style="font-size:20px; color: var(--text-color);">Health Insights!</span> <br>Hemat Premi dengan Hidup Sehat</h3>
+            <h3>
+                <span style="font-size:20px; color: var(--text-color);">Health Insights!</span> 
+                <br>
+                Hemat Premi dengan Hidup Sehat
+            </h3>
             <ul>
                 {% for rec in recommendations %}
                 <li class="recommendation-item">
@@ -1052,20 +1056,20 @@
                 }
             }
 
-            // Function to hide all result sections by adding 'hidden-element' class
+            // Menyembunyikan semua result section
             function hideAllResults() {
                 resultSections.forEach(section => {
                     section.classList.add('hidden-element');
-                    // For details elements, ensure they are closed when hidden
+                    // Untuk elemen detail, harus close saat hidden
                     if (section.tagName === 'DETAILS' && section.hasAttribute('open')) {
                         section.removeAttribute('open');
                     }
-                    // Reset animation properties so they can re-trigger when unhidden
+                    // Reset animation properties 
                     section.style.opacity = '';
                     section.style.transform = '';
-                    section.style.animation = 'none'; // Temporarily remove animation
+                    section.style.animation = 'none'; // Remove animation utk sementara
                     void section.offsetWidth; // Force reflow
-                    section.style.animation = ''; // Re-enable animation (will use CSS default)
+                    section.style.animation = ''; // Re-enable animation
                 });
                 if (errorMessageDiv) {
                     errorMessageDiv.style.display = 'none';
@@ -1080,7 +1084,7 @@
                     return false;
                 }
 
-                // Specific validations for age, height, weight, and surgeries
+                // Constraint validasi utk age, height, weight, dan num of surgeries
                 if (input.id === 'age') {
                     const age = parseInt(input.value);
                     if (isNaN(age) || age > 122) {
@@ -1180,12 +1184,11 @@
             // Call restoreFormValues on page load
             restoreFormValues();
 
-            // Clear form on reset button click
-            // Clear form on reset button click
+            // Clear form kalau reset button click
             form.querySelector('button[type="reset"]').addEventListener('click', function() {
-                // Clear local storage immediately
+                // Clear local storage
                 localStorage.removeItem('insuranceFormValues');
-                // Navigate back to the home page, which will re-render without prediction data
+                // Redirect balik ke home page
                 window.location.href = '/';
             });
 
