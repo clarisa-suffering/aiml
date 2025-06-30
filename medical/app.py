@@ -420,7 +420,7 @@ def predict():
     except Exception as e:
         return render_template('form.html', error=f"Terjadi kesalahan saat memproses: {str(e)}. Mohon coba lagi nanti.", form_data=request.form)
     
-# CLUSTER VISUALIZATION ROUTE
+#CLUSTERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
 try:
     kmeans_model = joblib.load('kmeans_model.pkl')
     scaler = joblib.load('scaler_kmeans.pkl')
@@ -431,7 +431,6 @@ except Exception as e:
     kmeans_model = None
     scaler = None
     data = None
-
 
 @app.route('/cluster-visual')
 def cluster_visual():
