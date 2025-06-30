@@ -13,13 +13,11 @@ from sklearn.decomposition import PCA
 
 app = Flask(__name__)
 
-#path untuk model dan metric
 MODEL_PATH = 'model.pkl'
 METRICS_PATH = 'metrics.json'
 KMEANS_MODEL_PATH = 'kmeans_model.pkl'
 SCALER_PATH = 'scaler_kmeans.pkl'
 
-#feature names sesuai urutan input (harus sama dengan urutan saat training)
 feature_names = [
     'Age',
     'Diabetes',

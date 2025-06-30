@@ -1,7 +1,0 @@
-flask
-pandas
-scikit-learn
-joblib #untuk menyimpan / memuat model
-
-#ketik di terminal:
-#pip install -r requirements.txt
