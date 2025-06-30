@@ -153,22 +153,54 @@ def create_feature_contribution_plot(user_input_list, model, feature_names, aver
         'NumberOfMajorSurgeries': 'Jumlah Operasi Besar'
     }
 
+    #hitung kontribusi BMI
+    idx_height = feature_names.index("Height")
+    idx_weight = feature_names.index("Weight")
+
+    user_height_cm = user_input_list[idx_height]
+    user_weight = user_input_list[idx_weight]
+
+    user_height_m = user_height_cm / 100
+    user_bmi = user_weight / (user_height_m ** 2) if user_height_m != 0 else 0
+
+    ideal_bmi_target = 22.0 
+
+    target_healthy_weight_for_user_height = ideal_bmi_target * (user_height_m ** 2)
+    
+    #jika tinggi 0, set berat menjadi 70 (berat badan umum)
+    if user_height_m == 0:
+        target_healthy_weight_for_user_height = average_feature_values_dict.get('Weight', 70)
+    
+    temp_input_for_bmi_calc = user_input_list.copy() 
+    temp_input_for_bmi_calc[idx_weight] = round(target_healthy_weight_for_user_height)
+
+    price_if_bmi_ideal = model.predict(np.array([temp_input_for_bmi_calc]))[0]
+
+    bmi_contribution = current_prediction - price_if_bmi_ideal
+    
+    if abs(bmi_contribution) > 1:
+        contributions['BMI'] = bmi_contribution
+
     #loop per fitur untuk menghitung kontribusi tiap kolom terhadap best case
     for i, feature in enumerate(feature_names):
-        #buat temporary input list dari best_case_input_list
-        temp_input_list = best_case_input_list.copy()
+        if feature in ['Height', 'Weight']:
+            continue
+
+        is_binary_feature = feature in ['Diabetes', 'BloodPressureProblems', 'AnyTransplants',
+                                        'AnyChronicDiseases', 'KnownAllergies', 'HistoryOfCancerInFamily',
+                                        'NumberOfMajorSurgeries']
         
-        #ganti fitur sekarang dengan input user
-        temp_input_list[i] = user_input_list[i] 
+        if is_binary_feature and user_input_list[i] == 0:
+            contribution_value = 0
+        else:
+            temp_input_list = best_case_input_list.copy() 
+            temp_input_list[i] = user_input_list[i]
+
+            temp_prediction = model.predict(np.array([temp_input_list]))[0]
+            contribution_value = temp_prediction - best_case_premi_value
         
-        #prediksi menggunakan input yang dimodifikasi
-        temp_prediction = model.predict(np.array([temp_input_list]))[0]
-        
-        #kontribusi = selisih antara prediction dan overall best_case_premi_value
-        contribution_value = temp_prediction - best_case_premi_value
-        
-        #hanya tambahkan kontribusi yang signifikan (misalnya, abs > $10)
-        if abs(contribution_value) > 10:
+        #hanya masukkan yang kontribusinya di atas $1
+        if abs(contribution_value) > 1:
             contributions[feature] = contribution_value
 
     #siapkan data, sort by impact
