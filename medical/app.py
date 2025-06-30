@@ -102,12 +102,12 @@ else:
 
 # Features considered controllable (for direct impact simulation) and their readable names
 controllable_features_map = {
-    'Diabetes': 'Diabetes',
-    'BloodPressureProblems': 'Tekanan Darah Tinggi',
-    'AnyChronicDiseases': 'Penyakit Kronis',
+    # 'Diabetes': 'Diabetes',
+    # 'BloodPressureProblems': 'Tekanan Darah Tinggi',
+    # 'AnyChronicDiseases': 'Penyakit Kronis',
     'Weight': 'Berat Badan', # Special handling for BMI
-    'KnownAllergies': 'Alergi',
-    'NumberOfMajorSurgeries': 'Operasi Besar'
+    # 'KnownAllergies': 'Alergi',
+    # 'NumberOfMajorSurgeries': 'Operasi Besar'
 }
 
 # --- Hypothetical Long-Term Projection Function (Does not use new input features) ---

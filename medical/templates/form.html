@@ -167,8 +167,6 @@
             /* Match container radius */
             position: relative;
             /* For gradient background */
-            /* Removed overflow: hidden from here, if present */
-            /* overflow: hidden; */
 
             /* Animated Gradient Background */
             background: linear-gradient(270deg, #e6ffe6, #cff0ff, #e6ffe6);
@@ -233,24 +231,30 @@
             text-align: center;
             border-radius: 8px;
             padding: 10px 15px;
-            position: absolute; /* Keep as absolute relative to .tooltip-icon */
-            z-index: 100; /* Increased z-index for tooltips */
+            position: absolute;
+            /* Keep as absolute relative to .tooltip-icon */
+            z-index: 100;
+            /* Increased z-index for tooltips */
             /* Adjusted positioning to be above the icon */
-            bottom: calc(100% + 10px); /* 100% is directly above, +10px for spacing */
+            bottom: calc(100% + 10px);
+            /* 100% is directly above, +10px for spacing */
             left: 50%;
             transform: translateX(-50%);
             opacity: 0;
-            transition: opacity 0.3s, transform 0.3s, visibility 0.3s; /* Added visibility */
+            transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+            /* Added visibility */
             font-size: 0.9rem;
             line-height: 1.4;
             box-shadow: var(--shadow-light);
-            pointer-events: none; /* Allows mouse events to pass through when hidden */
+            pointer-events: none;
+            /* Allows mouse events to pass through when hidden */
         }
 
         .tooltiptext::after {
             content: "";
             position: absolute;
-            top: 100%; /* Arrow at the bottom of the tooltip, pointing down */
+            top: 100%;
+            /* Arrow at the bottom of the tooltip, pointing down */
             left: 50%;
             margin-left: -5px;
             border-width: 5px;
@@ -261,7 +265,8 @@
         .tooltip-icon:hover .tooltiptext {
             visibility: visible;
             opacity: 1;
-            transform: translateX(-50%) translateY(0); /* Remove the slight lift on hover if it causes issues with positioning */
+            transform: translateX(-50%) translateY(0);
+            /* Remove the slight lift on hover if it causes issues with positioning */
         }
 
         input[type="number"],
@@ -393,7 +398,6 @@
             /* Increased padding */
             border-radius: 12px;
             margin-top: 35px;
-            /* Increased margin */
             text-align: center;
             box-shadow: var(--shadow-light);
             animation: fadeIn 0.5s ease-out;
@@ -419,22 +423,21 @@
         .recommendations-section,
         .plot-container,
         .risk-segment,
-        .disclaimer,
-        .collapsible-section {
+        .collapsible-section,
+        .disclaimer {
             opacity: 0;
-            /* Hidden initially for entrance animation */
             transform: translateY(20px);
             animation: fadeInSlideUp 0.8s forwards ease-out;
             animation-delay: 0.3s;
-            /* Delay for successive sections */
             margin-top: 35px;
-            /* Consistent top margin */
             padding: 30px;
-            /* Consistent padding */
             border-radius: 14px;
-            /* Consistent border radius */
             box-shadow: var(--shadow-light);
-            /* Consistent shadow */
+        }
+
+        /* Class to hide elements completely */
+        .hidden-element {
+            display: none !important;
         }
 
         .prediction-result {
@@ -761,7 +764,7 @@
             <a href="/" class="nav-brand">Asuransi Sehat</a>
             <ul class="nav-links">
                 <li><a href="/" class="nav-item {% if request.path == '/' %}active{% endif %}">Prediksi Premi</a></li>
-                </ul>
+            </ul>
         </div>
     </nav>
 
@@ -779,16 +782,8 @@
                         <span class="tooltiptext">Usia adalah faktor kunci karena risiko kesehatan umumnya meningkat seiring waktu.</span>
                     </span>
                 </label>
-                <input
-                    type="number"
-                    id="age"
-                    name="Age"
-                    min="18"
-                    max="122"
-                    required
-                    placeholder="Contoh: 35"
-                    value="{{ form_data.get('Age', '') }}"
-                />
+                <input type="number" id="age" name="Age" min="18" max="122" required placeholder="Contoh: 35"
+                    value="{{ form_data.get('Age', '') }}" />
                 <span class="input-error-message" id="age-error"></span>
             </div>
 
@@ -814,16 +809,8 @@
                         <span class="tooltiptext">Tinggi badan, bersama berat badan, digunakan untuk menghitung Indeks Massa Tubuh (BMI).</span>
                     </span>
                 </label>
-                <input
-                    type="number"
-                    id="height"
-                    name="Height"
-                    min="50"
-                    max="272"
-                    required
-                    placeholder="Contoh: 165"
-                    value="{{ form_data.get('Height', '') }}"
-                />
+                <input type="number" id="height" name="Height" min="50" max="272" required
+                    placeholder="Contoh: 165" value="{{ form_data.get('Height', '') }}" />
                 <span class="input-error-message" id="height-error"></span>
             </div>
 
@@ -850,16 +837,8 @@
                         <span class="tooltiptext">Berat badan, bersama tinggi badan, menentukan BMI, indikator penting risiko kesehatan.</span>
                     </span>
                 </label>
-                <input
-                    type="number"
-                    id="weight"
-                    name="Weight"
-                    min="10"
-                    max="300"
-                    required
-                    placeholder="Contoh: 65"
-                    value="{{ form_data.get('Weight', '') }}"
-                />
+                <input type="number" id="weight" name="Weight" min="10" max="300" required placeholder="Contoh: 65"
+                    value="{{ form_data.get('Weight', '') }}" />
                 <span class="input-error-message" id="weight-error"></span>
             </div>
 
@@ -932,16 +911,8 @@
                         <span class="tooltiptext">Jumlah operasi besar di masa lalu menunjukkan riwayat kesehatan yang lebih kompleks.</span>
                     </span>
                 </label>
-                <input
-                    type="number"
-                    id="numberofmajorsurgeries"
-                    name="NumberOfMajorSurgeries"
-                    min="0"
-                    max="3"
-                    required
-                    placeholder="Contoh: 1"
-                    value="{{ form_data.get('NumberOfMajorSurgeries', '') }}"
-                />
+                <input type="number" id="numberofmajorsurgeries" name="NumberOfMajorSurgeries" min="0" max="3"
+                    required placeholder="Contoh: 1" value="{{ form_data.get('NumberOfMajorSurgeries', '') }}" />
                 <span class="input-error-message" id="numberofmajorsurgeries-error"></span>
             </div>
 
@@ -957,23 +928,22 @@
         </div>
         {% endif %}
 
-        {% if prediction %}
-        <div class="prediction-result" role="region" aria-live="polite" aria-atomic="true">
+        {# Jinja logic: If prediction is NOT available, add 'hidden-element' class. #}
+        <div class="prediction-result {% if not prediction %}hidden-element{% endif %}" role="region"
+            aria-live="polite" aria-atomic="true">
             <h3>Hasil Prediksi Premi</h3>
             <p>{{ prediction|safe }}</p>
         </div>
 
-        {% if feature_plot %}
-        <div class="plot-container" role="img" aria-label="Grafik kontribusi fitur pada premi">
+        <div class="plot-container {% if not feature_plot %}hidden-element{% endif %}" role="img"
+            aria-label="Grafik kontribusi fitur pada premi">
             <h3>Analisis Faktor Premi Anda</h3>
             <img src="data:image/png;base64,{{ feature_plot }}" alt="Feature Contribution Plot" />
             <p>*Grafik ini mengestimasi dampak relatif setiap faktor terhadap premi Anda, dibandingkan baseline tanpa
                 faktor risiko.</p>
         </div>
-        {% endif %}
 
-        {% if recommendations %}
-        <div class="recommendations-section">
+        <div class="recommendations-section {% if not recommendations %}hidden-element{% endif %}">
             <h3>Potensi Penghematan Premi:</h3>
             <ul>
                 {% for rec in recommendations %}
@@ -984,41 +954,40 @@
                 {% endfor %}
             </ul>
         </div>
-        {% endif %}
-        {% endif %}
 
-        {% if user_health_insights %}
-        <details class="collapsible-section">
+        <details class="collapsible-section {% if not user_health_insights %}hidden-element{% endif %}">
             <summary>Pahami Profil Kesehatan Anda Lebih Dalam <i class="fas fa-chevron-right"></i></summary>
             <div class="collapsible-content">
                 <ul>
                     {% for insight in user_health_insights %}
-                    <li style="margin-bottom: 12px; font-size: 0.98rem;"><i class="fas fa-check-circle" style="color: var(--secondary-color); margin-right: 8px;"></i>{{ insight | safe }}</li>
+                    <li style="margin-bottom: 12px; font-size: 0.98rem;"><i class="fas fa-check-circle"
+                            style="color: var(--secondary-color); margin-right: 8px;"></i>{{ insight | safe }}</li>
                     {% endfor %}
                 </ul>
                 <p style="font-size: 0.85rem; color: var(--light-text-color); margin-top: 20px;">
-                    <i class="fas fa-info-circle"></i> Informasi ini disediakan untuk edukasi dan tidak menggantikan nasihat medis profesional.
+                    <i class="fas fa-info-circle"></i> Informasi ini disediakan untuk edukasi dan tidak menggantikan
+                    nasihat medis profesional.
                 </p>
             </div>
         </details>
-        {% endif %}
 
-        {% if long_term_projection %}
-            <div class="prediction-result" style="background: #e6f4f8; border-color: #3f51b5; color: #283593; margin-top: 20px;">
-                <h3>Proyeksi Premi Asuransi Jangka Panjang (5 Tahun):</h3>
-                <p>{{ long_term_projection | safe }}</p>
-                <p style="font-size: 0.9em; color: #444;">
-                    <i class="fas fa-info-circle"></i> Ini adalah proyeksi sederhana berdasarkan usia dan tren umum. Faktor gaya hidup dan perubahan kebijakan asuransi dapat sangat memengaruhi premi di masa depan.
-                </p>
-            </div>
-        {% endif %}
+        {# Note: This section reuses 'prediction-result' class. Ensure it's correctly targeted if needed #}
+        <div class="prediction-result {% if not long_term_projection %}hidden-element{% endif %}"
+            style="background: #e6f4f8; border-color: #3f51b5; color: #283593; margin-top: 20px;">
+            <h3>Proyeksi Premi Asuransi Jangka Panjang (5 Tahun):</h3>
+            <p>{{ long_term_projection | safe }}</p>
+            <p style="font-size: 0.9em; color: #444;">
+                <i class="fas fa-info-circle"></i> Ini adalah proyeksi sederhana berdasarkan usia dan tren umum. Faktor
+                gaya hidup dan perubahan kebijakan asuransi dapat sangat memengaruhi premi di masa depan.
+            </p>
+        </div>
 
-        {% if risk_segment %}
         {% set color = '#28a745' if 'Basic' in risk_segment else '#ffc107' if 'Moderate' in risk_segment else '#e74c3c'
         %}
         {% set class_name = 'risk-basic' if 'Basic' in risk_segment else 'risk-moderate' if 'Moderate' in risk_segment
         else 'risk-premium' %}
-        <div class="risk-segment {{ class_name }}" role="region" aria-live="polite" aria-atomic="true">
+        <div class="risk-segment {{ class_name }} {% if not risk_segment %}hidden-element{% endif %}" role="region"
+            aria-live="polite" aria-atomic="true">
             <h2>Paket Asuransi</h2>
             <p class="desc" style="color: inherit; font-size: 1.5rem;"><strong>{{ risk_segment }}</strong></p>
             <p style="color: #444;">Kategori ini menunjukkan profil risiko Anda berdasarkan data yang dimasukkan.
@@ -1036,13 +1005,18 @@
                     untuk perlindungan maksimal.</li>
             </ul>
         </div>
-        {% endif %}
 
-        <div class="disclaimer" style="margin-top: 50px; padding: 25px; background-color: #f0f0f0; border-radius: 10px; border: 1px solid #ddd; color: #555; font-size: 0.9rem; text-align: center;">
+        {# Disclaimer: Hide if no prediction and no form data (implies initial page load) #}
+        <div class="disclaimer {% if not prediction and not form_data %}hidden-element{% endif %}"
+            style="margin-top: 50px; padding: 25px; background-color: #f0f0f0; border-radius: 10px; border: 1px solid #ddd; color: #555; font-size: 0.9rem; text-align: center;">
             <h3>Penting untuk Diketahui:</h3>
-            <p>Estimasi premi asuransi ini dihasilkan oleh model Machine Learning berdasarkan data historis dan informasi yang Anda berikan. Ini adalah perkiraan dan bukan penawaran premi yang mengikat.</p>
-            <p>Faktor-faktor aktual yang memengaruhi premi Anda dapat bervariasi tergantung pada kebijakan perusahaan asuransi, hasil pemeriksaan medis mendalam, dan data lain yang mungkin tidak termasuk di sini.</p>
-            <p>Selalu konsultasikan dengan agen asuransi berlisensi dan profesional kesehatan untuk saran medis atau finansial yang dipersonalisasi.</p>
+            <p>Estimasi premi asuransi ini dihasilkan oleh model Machine Learning berdasarkan data historis dan informasi
+                yang Anda berikan. Ini adalah perkiraan dan bukan penawaran premi yang mengikat.</p>
+            <p>Faktor-faktor aktual yang memengaruhi premi Anda dapat bervariasi tergantung pada kebijakan perusahaan
+                perusahaan asuransi, hasil pemeriksaan medis mendalam, dan data lain yang mungkin tidak termasuk di
+                sini.</p>
+            <p>Selalu konsultasikan dengan agen asuransi berlisensi dan profesional kesehatan untuk saran medis atau
+                finansial yang dipersonalisasi.</p>
         </div>
 
         <p style="text-align: center; font-size: 0.85rem; color: #888; margin-top: 30px; padding-bottom: 20px;">
@@ -1055,8 +1029,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('insuranceForm');
             const inputs = form.querySelectorAll('input, select');
+            const resultSections = document.querySelectorAll(
+                '.prediction-result, .plot-container, .recommendations-section, details.collapsible-section, .risk-segment, .disclaimer'
+            );
+            const errorMessageDiv = document.querySelector('.error-message');
 
-            // Function to display an error message
             function displayError(inputElement, message) {
                 const errorSpan = document.getElementById(`${inputElement.id}-error`);
                 if (errorSpan) {
@@ -1066,7 +1043,6 @@
                 }
             }
 
-            // Function to clear an error message
             function clearError(inputElement) {
                 const errorSpan = document.getElementById(`${inputElement.id}-error`);
                 if (errorSpan) {
@@ -1076,9 +1052,28 @@
                 }
             }
 
-            // Validation function for individual inputs
+            // Function to hide all result sections by adding 'hidden-element' class
+            function hideAllResults() {
+                resultSections.forEach(section => {
+                    section.classList.add('hidden-element');
+                    // For details elements, ensure they are closed when hidden
+                    if (section.tagName === 'DETAILS' && section.hasAttribute('open')) {
+                        section.removeAttribute('open');
+                    }
+                    // Reset animation properties so they can re-trigger when unhidden
+                    section.style.opacity = '';
+                    section.style.transform = '';
+                    section.style.animation = 'none'; // Temporarily remove animation
+                    void section.offsetWidth; // Force reflow
+                    section.style.animation = ''; // Re-enable animation (will use CSS default)
+                });
+                if (errorMessageDiv) {
+                    errorMessageDiv.style.display = 'none';
+                }
+            }
+
             function validateInput(input) {
-                clearError(input); // Clear previous error
+                clearError(input);
 
                 if (input.hasAttribute('required') && input.value.trim() === '') {
                     displayError(input, 'Kolom ini wajib diisi.');
@@ -1121,12 +1116,10 @@
                 return true;
             }
 
-            // Add blur event listeners for real-time validation feedback
             inputs.forEach(input => {
                 input.addEventListener('blur', function() {
                     validateInput(this);
                 });
-                // Also listen for change event on selects
                 if (input.tagName === 'SELECT') {
                     input.addEventListener('change', function() {
                         validateInput(this);
@@ -1135,10 +1128,9 @@
             });
 
             form.addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent default form submission
+                event.preventDefault();
 
                 let formIsValid = true;
-                // Validate all inputs before submission
                 inputs.forEach(input => {
                     if (!validateInput(input)) {
                         formIsValid = false;
@@ -1146,13 +1138,9 @@
                 });
 
                 if (formIsValid) {
-                    // Store form values in localStorage before submission
                     storeFormValues();
-                    // Submit the form programmatically, which will cause a page reload
                     form.submit();
                 } else {
-                    // If the form is not valid, display a general error message if needed
-                    const errorMessageDiv = document.querySelector('.error-message');
                     if (errorMessageDiv) {
                         errorMessageDiv.innerHTML = '<p>Mohon perbaiki kesalahan pada formulir yang ditandai.</p>';
                         errorMessageDiv.style.display = 'block';
@@ -1160,7 +1148,6 @@
                 }
             });
 
-            // Store form values in localStorage before submission/unload
             function storeFormValues() {
                 const values = {};
                 inputs.forEach(input => {
@@ -1173,7 +1160,6 @@
                 localStorage.setItem('insuranceFormValues', JSON.stringify(values));
             }
 
-            // Restore form values from localStorage on page load
             function restoreFormValues() {
                 const storedValues = localStorage.getItem('insuranceFormValues');
                 if (storedValues) {
@@ -1187,34 +1173,46 @@
                             }
                         }
                     });
-                    localStorage.removeItem('insuranceFormValues'); // Clear after restoring
+                    localStorage.removeItem('insuranceFormValues');
                 }
             }
 
-            // Call restoreFormValues on page load to re-populate the form
+            // Call restoreFormValues on page load
             restoreFormValues();
 
             // Clear form on reset button click
+            // Clear form on reset button click
             form.querySelector('button[type="reset"]').addEventListener('click', function() {
-                inputs.forEach(input => {
-                    clearError(input);
-                    if (input.tagName === 'SELECT') {
-                        input.value = ""; // Set select to default empty option
-                    } else {
-                        input.value = ""; // Clear text/number inputs
-                    }
-                });
-                const errorMessageDiv = document.querySelector('.error-message');
-                if (errorMessageDiv) {
-                    errorMessageDiv.style.display = 'none';
+                // Clear local storage immediately
+                localStorage.removeItem('insuranceFormValues');
+                // Navigate back to the home page, which will re-render without prediction data
+                window.location.href = '/';
+            });
+
+            // Initial visibility check when the page loads
+            // If the page loads and Flask *has* provided prediction data (meaning the 'hidden-element' class was NOT applied by Jinja),
+            // ensure the animations are correctly applied by making them visible.
+            // If Flask *has NOT* provided data, Jinja would have applied 'hidden-element', keeping them hidden.
+            resultSections.forEach(section => {
+                if (!section.classList.contains('hidden-element')) {
+                    // This section was rendered by Flask and is meant to be visible.
+                    // Re-trigger animation by resetting properties if needed, then allow CSS to take over.
+                    section.style.opacity = 0;
+                    section.style.transform = 'translateY(20px)';
+                    section.style.animation = 'none'; // Temporarily disable
+                    void section.offsetWidth; // Trigger reflow
+                    section.style.animation = 'fadeInSlideUp 0.8s forwards ease-out'; // Re-apply animation
                 }
-                localStorage.removeItem('insuranceFormValues'); // Clear stored values on reset
+                // If it has 'hidden-element' class, it will remain display: none !important;
             });
         });
 
-        // Helper function for currency formatting (if used elsewhere) - not strictly needed for this HTML but kept from original
         function format_currency(amount) {
-            return new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
+            return new Intl.NumberFormat('en-US', {
+                style: 'decimal',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount);
         }
     </script>
 </body>
