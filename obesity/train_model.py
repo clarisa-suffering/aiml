@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder 
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.neighbors import KNeighborsClassifier
@@ -17,7 +17,7 @@ MODEL_NAME = 'obesity_knn_pipeline.pkl'
 DATASET_PATH = os.path.join(DATA_DIR, DATASET_NAME)
 MODEL_PATH = os.path.join(MODEL_DIR, MODEL_NAME)
 
-# melatih model menggunakan metode KNN untuk klasifikasi tingkat obesitas
+# Fungsi untuk melatih model menggunakan metode KNN untuk klasifikasi tingkat obesitas
 def train_and_save_knn_model():
     # memastikan directory ada
     os.makedirs(MODEL_DIR, exist_ok=True)
@@ -35,9 +35,6 @@ def train_and_save_knn_model():
         print(f"Terjadi kesalahan saat memuat dataset: {e}")
         return
     
-    # inisialisasi dengan daftar fitur numerik lengkap termasuk BMI sebagai default
-    numerical_features = ['Age', 'Height', 'Weight', 'BMI', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
-
     # DATA PREPROCESSING
     # tambahkan kolom BMI
     if 'BMI' not in df.columns:
@@ -55,80 +52,82 @@ def train_and_save_knn_model():
                 bmi_median = df['BMI'].median()
                 df['BMI'] = df['BMI'].fillna(bmi_median)
                 print(f"Kolom 'BMI' berhasil ditambahkan dan nilai NaN diisi dengan median: {bmi_median:.2f}.")
+            else:
+                print("Kolom 'BMI' berhasil ditambahkan. Tidak ada nilai NaN yang diisi.")
         else:
             print("Warning: Kolom 'Height' atau 'Weight' tidak ditemukan. Tidak dapat menghitung BMI.")
-            # jika BMI tidak dapat dihitung, hapus BMI dari numerical_features
-            if 'BMI' in numerical_features: # pastikan 'BMI' ada di daftar awal sebelum dihapus
-                numerical_features.remove('BMI')
+    else:
+        print("Kolom 'BMI' sudah ada di dataset.")
 
+    # Tentukan final_numerical_features dan final_categorical_features
+    # *** PERUBAHAN DI SINI: 'Weight' TIDAK DIHAPUS lagi dari final_numerical_features ***
+    final_numerical_features = ['BMI', 'Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
+    # Filter fitur numerik yang benar-benar ada di DataFrame
+    final_numerical_features = [f for f in final_numerical_features if f in df.columns] 
+    # Pastikan BMI tidak hilang jika Height/Weight tidak ada
+    if 'BMI' not in df.columns and 'BMI' in final_numerical_features:
+        final_numerical_features.remove('BMI')
 
     target_column = 'NObeyesdad'
     categorical_features = ['Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE', 'SCC', 'CALC', 'MTRANS']
-
-    # pastikan semua fitur yang diidentifikasi ada di DataFrame
-    # Baris ini sekarang aman karena numerical_features selalu didefinisikan
-    final_numerical_features = [f for f in numerical_features if f in df.columns]
+    # Filter fitur kategorikal yang benar-benar ada di DataFrame
     final_categorical_features = [f for f in categorical_features if f in df.columns]
 
     X = df[final_numerical_features + final_categorical_features].copy()
     Y = df[target_column].copy()
 
-    # encode label target Y sebelum outlier removal agar Y_encoded dan X tetap sinkron
+    # encode label target Y
     label_encoder = LabelEncoder()
     Y_encoded = label_encoder.fit_transform(Y)
     print(f"Label target berhasil di-encode: {list(label_encoder.classes_)}")
 
-    # REMOVE OUTLIERS
-    print("\nMendeteksi dan menghapus outlier...")
-    initial_rows = X.shape[0] # jumlah baris awal sebelum penghapusan outlier
-    
-    # buat DataFrame sementara untuk outlier removal agar tidak memodifikasi X dan Y asli terlalu cepat
-    temp_df_for_outliers = pd.concat([X, pd.Series(Y_encoded, index=X.index, name='Y_encoded_temp')], axis=1)
-
+    # --- PENANGANAN MISSING VALUES (SETELAH BMI DIHITUNG) ---
+    print("\n--- Penanganan Missing Values ---")
     for col in final_numerical_features:
-        # hanya proses kolom jika ada di temp_df_for_outliers
-        if col in temp_df_for_outliers.columns:
-            Q1 = temp_df_for_outliers[col].quantile(0.25)
-            Q3 = temp_df_for_outliers[col].quantile(0.75)
-            IQR = Q3 - Q1
-            
-            lower_bound = Q1 - 1.5 * IQR
-            upper_bound = Q3 + 1.5 * IQR
-            
-            # buat mask untuk outlier
-            outlier_mask = (temp_df_for_outliers[col] < lower_bound) | \
-                           (temp_df_for_outliers[col] > upper_bound)
-            
-            if outlier_mask.any():
-                rows_before_col_removal = temp_df_for_outliers.shape[0]
-                temp_df_for_outliers = temp_df_for_outliers[~outlier_mask].copy() # Hapus baris outlier
-                rows_removed_this_col = rows_before_col_removal - temp_df_for_outliers.shape[0]
-                print(f"  {rows_removed_this_col} baris dihapus karena outlier di '{col}'. Sisa baris: {temp_df_for_outliers.shape[0]}")
-            else:
-                print(f"  Tidak ada outlier signifikan di '{col}' berdasarkan metode IQR.")
-        else:
-            print(f"  Kolom '{col}' tidak ditemukan di DataFrame untuk deteksi outlier.")
-
-    rows_removed = initial_rows - temp_df_for_outliers.shape[0]
-    print(f"Total baris dihapus karena outlier: {rows_removed} ({rows_removed / initial_rows * 100:.2f}%)")
-
-    # update X dan Y_encoded ke versi yang sudah dibersihkan dari outlier
-    X = temp_df_for_outliers[final_numerical_features + final_categorical_features].copy()
-    Y_encoded = temp_df_for_outliers['Y_encoded_temp'].copy()
-
-    # menangani missing values pada X
-    for col in final_numerical_features:
-        X[col] = pd.to_numeric(X[col], errors='coerce') # memastikan numerik
+        X[col] = pd.to_numeric(X[col], errors='coerce') # Pastikan numerik
         if X[col].isnull().any():
             median_val = X[col].median()
             X[col] = X[col].fillna(median_val)
             print(f"Mengisi nilai hilang di '{col}' dengan median ({median_val}).")
-    
+
     for col in final_categorical_features:
         if X[col].isnull().any():
             mode_val = X[col].mode()[0]
             X[col] = X[col].fillna(mode_val)
             print(f"Mengisi nilai hilang di '{col}' dengan modus ('{mode_val}').")
+
+    print("\n--- Analisis Korelasi Fitur Numerik dengan Target ---")
+    X_num_final = X[final_numerical_features]
+
+    # Gabungkan fitur numerik dan target untuk korelasi
+    temp_corr_df = pd.concat([X_num_final, pd.Series(Y_encoded, name='Target_Encoded', index=X_num_final.index)], axis=1)
+
+    correlations = temp_corr_df.corr()['Target_Encoded'].drop('Target_Encoded').sort_values(ascending=False)
+    print("Korelasi fitur numerik dengan target (semakin tinggi, semakin berpengaruh):")
+    print(correlations)
+
+    print("\nKorelasi antar fitur numerik (untuk cek redundansi):")
+    print(X_num_final.corr())
+
+    # --- PEMERIKSAAN DISTRIBUSI KELAS (setelah preprocessing) ---
+    print("\n--- Pemeriksaan Distribusi Kelas NObeyesdad (setelah preprocessing) ---")
+    
+    # Pastikan 'Insufficient_Weight' ada di kelas-kelas yang di-encode sebelum mencoba mengaksesnya
+    if 'Insufficient_Weight' in label_encoder.classes_:
+        insufficient_weight_encoded_value = label_encoder.transform(['Insufficient_Weight'])[0]
+        count_insufficient_weight = (Y_encoded == insufficient_weight_encoded_value).sum()
+        total_rows_after_preprocessing = X.shape[0]
+        percentage_insufficient_weight = (count_insufficient_weight / total_rows_after_preprocessing) * 100
+        
+        print(f"Jumlah data dengan 'Insufficient_Weight': {count_insufficient_weight} baris")
+        print(f"Persentase data dengan 'Insufficient_Weight': {percentage_insufficient_weight:.2f}% dari total {total_rows_after_preprocessing} baris.")
+    else:
+        print("Kelas 'Insufficient_Weight' tidak ditemukan di target NObeyesdad.")
+        
+    print("\nDistribusi lengkap kelas NObeyesdad (setelah encoding dan preprocessing):")
+    y_original_after_preprocessing = label_encoder.inverse_transform(Y_encoded)
+    print(pd.Series(y_original_after_preprocessing).value_counts())
+    print("--- Akhir Pemeriksaan Distribusi Kelas ---")
 
     # pipeline preprocessing
     preprocessor = ColumnTransformer(
@@ -139,10 +138,10 @@ def train_and_save_knn_model():
         remainder='drop'
     )
 
-    # pipeline model KNN 
+    # pipeline model KNN
     knn_pipeline = Pipeline(steps=[
         ('preprocessor', preprocessor),
-        ('classifier', KNeighborsClassifier()) 
+        ('classifier', KNeighborsClassifier())
     ])
 
     # coba berbagai nilai k, dari 1 sampai 20
@@ -154,11 +153,10 @@ def train_and_save_knn_model():
     }
 
     # bagi dataset menjadi 80% data training dan 20% test data
-    # gunakan Y_encoded yang sudah bersih dari outlier
     X_train, X_test, y_train_encoded, y_test_encoded = train_test_split(X, Y_encoded, test_size=0.2, random_state=42, stratify=Y_encoded)
     
     # mencari hyperparameter terbaik untuk metode KNN
-    print("Mencari hyperparameter terbaik untuk KNN...")
+    print("\nMencari hyperparameter terbaik untuk KNN...")
     grid_search = GridSearchCV(knn_pipeline, param_grid, cv=5, scoring='accuracy', n_jobs=-1)
     grid_search.fit(X_train, y_train_encoded)
 
