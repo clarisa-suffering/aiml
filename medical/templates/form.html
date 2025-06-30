@@ -167,8 +167,8 @@
             /* Match container radius */
             position: relative;
             /* For gradient background */
-            overflow: hidden;
-            /* Ensure gradient stays within bounds */
+            /* Removed overflow: hidden from here, if present */
+            /* overflow: hidden; */
 
             /* Animated Gradient Background */
             background: linear-gradient(270deg, #e6ffe6, #cff0ff, #e6ffe6);
@@ -233,26 +233,24 @@
             text-align: center;
             border-radius: 8px;
             padding: 10px 15px;
-            position: absolute;
-            z-index: 10;
-            /* High z-index to be above other elements */
-            bottom: 125%;
-            /* Position above the icon */
+            position: absolute; /* Keep as absolute relative to .tooltip-icon */
+            z-index: 100; /* Increased z-index for tooltips */
+            /* Adjusted positioning to be above the icon */
+            bottom: calc(100% + 10px); /* 100% is directly above, +10px for spacing */
             left: 50%;
             transform: translateX(-50%);
             opacity: 0;
-            transition: opacity 0.3s, transform 0.3s;
+            transition: opacity 0.3s, transform 0.3s, visibility 0.3s; /* Added visibility */
             font-size: 0.9rem;
             line-height: 1.4;
             box-shadow: var(--shadow-light);
-            pointer-events: none;
-            /* Allow clicks to pass through when hidden */
+            pointer-events: none; /* Allows mouse events to pass through when hidden */
         }
 
         .tooltiptext::after {
             content: "";
             position: absolute;
-            top: 100%;
+            top: 100%; /* Arrow at the bottom of the tooltip, pointing down */
             left: 50%;
             margin-left: -5px;
             border-width: 5px;
@@ -263,8 +261,7 @@
         .tooltip-icon:hover .tooltiptext {
             visibility: visible;
             opacity: 1;
-            transform: translateX(-50%) translateY(-5px);
-            /* Slight lift on hover */
+            transform: translateX(-50%) translateY(0); /* Remove the slight lift on hover if it causes issues with positioning */
         }
 
         input[type="number"],
@@ -764,10 +761,7 @@
             <a href="/" class="nav-brand">Asuransi Sehat</a>
             <ul class="nav-links">
                 <li><a href="/" class="nav-item {% if request.path == '/' %}active{% endif %}">Prediksi Premi</a></li>
-                <!-- <li><a href="/cluster-visual"
-                    class="nav-item {% if '/cluster' in request.path %}active{% endif %}">Visualisasi Cluster</a>
-                </li> -->
-            </ul>
+                </ul>
         </div>
     </nav>
 
