@@ -112,13 +112,6 @@ controllable_features_map = {
 
 # --- Hypothetical Long-Term Projection Function (Does not use new input features) ---
 def predict_long_term_premium(user_current_age, user_current_premium, years=5):
-    """
-    A simplified, rule-based function to simulate long-term premium change.
-    This does NOT use the ML model for future predictions but rather
-    applies a heuristic increase based on age and a general inflation rate.
-    For a true ML-driven long-term projection, a time-series model and
-    longitudinal data would be required.
-    """
     # Assume a fixed annual age-related premium increase percentage (e.g., 0.5% per year)
     # and a general inflation rate (e.g., 2% per year)
     age_factor_increase = 0.005
@@ -443,7 +436,6 @@ def predict():
             )
             long_term_projection_text = (
                 f"Premi yang Diproyeksikan dalam 5 Tahun: <strong>${projected_5_year_premium:,.2f}</strong> "
-                f"(dengan asumsi tren kesehatan dan inflasi umum)"
             )
 
         return render_template('form.html', 
