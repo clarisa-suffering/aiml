@@ -39,7 +39,6 @@ best_case_input_list = []
 kmeans_model = None
 scaler_kmeans = None
 
-# --- Load Model dan Metrics ---
 if not os.path.exists(MODEL_PATH):
     print(f"Error: Model file '{MODEL_PATH}' not found. Please ensure your train_model.py script has run successfully.")
 else:
@@ -105,7 +104,6 @@ if model is not None and average_feature_values:
         best_case_input_list = [0] * len(feature_names) 
 
 
-# --- Load KMeans Model dan Scaler ---
 if os.path.exists(KMEANS_MODEL_PATH) and os.path.exists(SCALER_PATH):
     try:
         kmeans_model = joblib.load(KMEANS_MODEL_PATH)
@@ -118,12 +116,10 @@ if os.path.exists(KMEANS_MODEL_PATH) and os.path.exists(SCALER_PATH):
 else:
     print("Model clustering atau scaler tidak ditemukan.")
 
-#fitur yang bisa dikontrol dan namanya dalam bahasa indonesia
 controllable_features_map = {
     'Weight': 'Berat Badan',
 }
 
-# --- Hypothetical Long-Term Projection Function ---
 def predict_long_term_premium(user_current_age, user_current_premium, years=5):
     #asumsi fixed annual age-related premium increase percentage (misal 0.5% per tahun) dan general inflation rate (misal 2% per tahun)
     age_factor_increase = 0.005
@@ -136,7 +132,6 @@ def predict_long_term_premium(user_current_age, user_current_premium, years=5):
 
     return projected_premium
 
-# --- FEATURE CONTRIBUTION PLOT FUNCTION ---
 def create_feature_contribution_plot(user_input_list, model, feature_names, average_feature_values_dict, current_prediction, best_case_input_list, best_case_premi_value):
     contributions = {}
 
@@ -237,7 +232,7 @@ def create_feature_contribution_plot(user_input_list, model, feature_names, aver
 
     return plot_url
 
-# --- SIMULATE SAVINGS ---
+#simulate savings
 def simulate_savings(user_input_list, model, predicted_price):
     recommendations = []
     
@@ -327,7 +322,7 @@ def simulate_savings(user_input_list, model, predicted_price):
     return recommendations
 
 
-# --- WEBSITE ROUTES ---
+#Route
 @app.route('/')
 def home():
     return render_template('form.html', form_data={})
@@ -352,7 +347,6 @@ def predict():
 
         input_features_list = [input_form_data[name] for name in feature_names]
 
-        #scaling fitur untuk clustering
         cluster_label = "Kategori risiko tidak tersedia (model clustering tidak dimuat)."
         if kmeans_model and scaler_kmeans:
             user_input_scaled = scaler_kmeans.transform([input_features_list])
@@ -365,13 +359,10 @@ def predict():
             }
             cluster_label = cluster_labels.get(cluster, "Unknown Risk")
 
-        #convert ke 2D array
         input_array = np.array([input_features_list])
 
-        #buat prediction
         predicted_value = model.predict(input_array)[0]
 
-        #buat estimasi range berdasarkan MAE
         lower_bound = max(0, predicted_value - mae)
         upper_bound = predicted_value + mae
 
@@ -381,13 +372,10 @@ def predict():
             f"<hr style='border-top: 1px dashed #ccc; margin: 15px 0;'>Premi Kondisi Ideal: <strong>${best_case_premi_value:,.2f}</strong>"
         )
         
-        #pass best_case_input_list dan best_case_premi_value ke plotting function
         feature_plot_url = create_feature_contribution_plot(input_features_list, model, feature_names, average_feature_values, predicted_value, best_case_input_list, best_case_premi_value)
         
-        #simulasikan potensi penghematan
         savings = simulate_savings(input_features_list, model, predicted_value)
 
-        # --- Generate Detailed Health Insights ---
         user_health_insights = []
 
         #insight fitur spesifik berdasarkan current input_form_data
@@ -426,7 +414,6 @@ def predict():
         #age insight
         user_health_insights.append(f"<strong>Usia Anda ({input_form_data.get('Age')} tahun):</strong> Seiring bertambahnya usia, risiko kesehatan cenderung meningkat secara alami, yang merupakan faktor penting dalam perhitungan premi asuransi.")
         
-        # --- Long-Term Projection Calculation ---
         long_term_projection_text = None
         if model:
             projected_5_year_premium = predict_long_term_premium(
